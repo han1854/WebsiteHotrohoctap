@@ -1,0 +1,24 @@
+﻿@model List<WebsiteHotrohoctap.Models.Lesson>
+@{
+    ViewData["Title"] = "Danh sách bài học";
+    var course = ViewBag.Course as WebsiteHotrohoctap.Models.Course;
+}
+
+<h4 class="mb-4 text-center text-primary">Danh sách bài học</h4>
+
+<div class="container">
+    <div class="list-group shadow-sm">
+        @foreach (var lesson in Model)
+        {
+            <a asp-controller="LessonContent" asp-action="ByLesson" asp-route-lessonId="@lesson.LessonID"
+               class="list-group-item list-group-item-action rounded-3 mb-2 shadow-sm">
+                <div class="fw-bold text-primary">@lesson.LessonName</div>
+                <small class="text-muted">@lesson.LessonDescription</small>
+            </a>
+        }
+    </div>
+
+    <div class="text-center mt-4">
+        <a asp-controller="Course" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">Quay lại danh sách khóa học</a>
+    </div>
+</div>

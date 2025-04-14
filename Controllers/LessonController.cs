@@ -28,7 +28,7 @@ namespace WebsiteHotrohoctap.Controllers
         public async Task<IActionResult> Create()
         {
             var courses = await _courseRepository.GetAllAsync();
-            ViewBag.Courses = new SelectList(courses, "Id", "Name");
+            ViewBag.Courses = new SelectList(courses, "CourseID", "CourseName");
 
             return View();
         }
@@ -36,15 +36,26 @@ namespace WebsiteHotrohoctap.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Lesson lesson)
         {
+            if (!ModelState.IsValid)
+            {
+                // In ra các lỗi để kiểm tra
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 await _lessonRepository.AddAsync(lesson);
                 return RedirectToAction(nameof(Index));
             }
+
             var courses = await _courseRepository.GetAllAsync();
-            ViewBag.Courses = new SelectList(courses, "Id", "Name");
+            ViewBag.Courses = new SelectList(courses, "CourseID", "CourseName");
             return View(lesson);
         }
+
         private async Task<string> SaveImage(IFormFile image)
         {
             var savePath = Path.Combine("wwwroot/images", image.FileName);
@@ -73,7 +84,7 @@ namespace WebsiteHotrohoctap.Controllers
             }
 
             var courses = await _courseRepository.GetAllAsync();
-            ViewBag.Courses = new SelectList(courses, "Id", "Name", lesson.CourseID);
+            ViewBag.Courses = new SelectList(courses, "CourseID", "CourseName", lesson.CourseID);
             return View(lesson);
         }
         [Authorize(Roles = SD.Role_Admin)]
@@ -95,7 +106,7 @@ namespace WebsiteHotrohoctap.Controllers
                 return RedirectToAction(nameof(Index));
             }
             var courses = await _courseRepository.GetAllAsync();
-            ViewBag.Courses = new SelectList(courses, "Id", "Name");
+            ViewBag.Courses = new SelectList(courses, "CourseID", "CourseName");
             return View(lesson);
         }
 
@@ -116,5 +127,12 @@ namespace WebsiteHotrohoctap.Controllers
             await _lessonRepository.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
+        public async Task<IActionResult> ByCourse(int courseId)
+        {
+            var lessons = await _lessonRepository.GetLessonsByCourseIdAsync(courseId);
+            ViewBag.Course = await _courseRepository.GetByIdAsync(courseId);
+            return View(lessons);
+        }
+
     }
 }

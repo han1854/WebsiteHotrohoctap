@@ -41,7 +41,7 @@ namespace WebsiteHotrohoctap.Controllers
                 _context.Enrollments.Add(enrollment);
                 await _context.SaveChangesAsync();
             }
-            return RedirectToAction("Index", "Lesson", new { courseId = courseId });
+            return RedirectToAction("ByCourse", "Lesson", new { courseId = courseId });
         }
 
     }

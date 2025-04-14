@@ -7,7 +7,7 @@
         public string QuestionText { get; set; }
         public string CorrectAnswer { get; set; }
         public int ExamID { get; set; }
-        public Exam Exam { get; set; }
+        public Exam? Exam { get; set; }
 
     }
 }

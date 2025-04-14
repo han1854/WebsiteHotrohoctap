@@ -9,7 +9,7 @@ namespace WebsiteHotrohoctap.Models
         public string LessonName { get; set; }
         public string? LessonDescription { get; set; }
         public int CourseID { get; set; }
-        public Course Course { get; set; }
+        public Course? Course { get; set; }
         public List<Exam>? Exams { get; set; }
         public List<LessonContent>? LessonContents { get; set; }
     }

@@ -1,47 +1,42 @@
 ﻿@model IEnumerable<WebsiteHotrohoctap.Models.Lesson>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Danh sách bài học";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-gradient">📚 Danh sách bài học</h3>
+        <a asp-action="Create" class="btn btn-outline-primary rounded-pill shadow-sm">➕ Thêm bài học</a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.LessonName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LessonDescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Course)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.LessonName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LessonDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Course.CourseName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.LessonID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.LessonID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.LessonID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered shadow-sm rounded bg-white">
+            <thead class="thead-dark">
+                <tr class="text-center">
+                    <th>@Html.DisplayNameFor(model => model.First().LessonName)</th>
+                    <th>@Html.DisplayNameFor(model => model.First().LessonDescription)</th>
+                    <th>Thuộc khóa học</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="align-middle text-center">
+                        <td>@item.LessonName</td>
+                        <td>@item.LessonDescription</td>
+                        <td>@item.Course?.CourseName</td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                <a asp-action="Edit" asp-route-id="@item.LessonID" class="btn btn-sm btn-outline-warning rounded-pill">Sửa</a>
+                                <a asp-action="Details" asp-route-id="@item.LessonID" class="btn btn-sm btn-outline-info rounded-pill">Chi tiết</a>
+                                <a asp-action="Delete" asp-route-id="@item.LessonID" class="btn btn-sm btn-outline-danger rounded-pill">Xóa</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -9,5 +9,7 @@ namespace WebsiteHotrohoctap.Repositories
         Task AddAsync(LessonContent lessonContent);
         Task UpdateAsync(LessonContent lessonContent);
         Task DeleteAsync(int id);
+        Task<List<LessonContent>> GetByLessonIdAsync(int lessonId);
+
     }
 }

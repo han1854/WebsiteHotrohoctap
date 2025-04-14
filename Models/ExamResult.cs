@@ -10,6 +10,6 @@ namespace WebsiteHotrohoctap.Models
         public DateTime ExamDate { get; set; }
         public User User { get; set; }
         public int ExamID { get; set; }
-        public Exam Exam { get; set; }
+        public Exam? Exam { get; set; }
     }
 }

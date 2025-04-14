@@ -40,5 +40,13 @@ namespace WebsiteHotrohoctap.Repositories
             _context.Lessons.Remove(lesson);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<Lesson>> GetLessonsByCourseIdAsync(int courseId)
+        {
+            return await _context.Lessons
+                .Where(l => l.CourseID == courseId)
+                .ToListAsync();
+        }
+
     }
 }

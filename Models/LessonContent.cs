@@ -9,6 +9,6 @@ namespace WebsiteHotrohoctap.Models
         public string ContentType { get; set; }
         public string ContentData { get; set; }
         public int LessonID { get; set; }
-        public Lesson Lesson { get; set; }
+        public Lesson? Lesson { get; set; }
     }
 }

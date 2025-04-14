@@ -11,6 +11,7 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 
 builder.Services.AddScoped<ICourseRepository, EFCourseRepository>();
 builder.Services.AddScoped<ILessonRepository, EFLessonRepository>();
+builder.Services.AddScoped<ILessonContentRepository, EFLessonContentRepository>();
 builder.Services.AddScoped<IExamRepository, EFExamRepository>();
 builder.Services.AddScoped<IExamContentRepository, EFExamContentRepository>();
 builder.Services.AddScoped<IExamResultRepository, EFExamResultRepository>();

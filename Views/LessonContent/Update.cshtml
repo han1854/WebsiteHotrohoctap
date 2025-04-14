@@ -9,26 +9,48 @@
 <h4>LessonContent</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Update">
+    <div class="col-md-6">
+        <form asp-action="Update" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ContentID" />
+
             <div class="form-group">
                 <label asp-for="ContentType" class="control-label"></label>
-                <input asp-for="ContentType" class="form-control" />
+                <select asp-for="ContentType" class="form-control" id="contentType">
+                    <option value="text" selected="@((Model.ContentType == "text").ToString().ToLower())">Văn bản</option>
+                    <option value="image" selected="@((Model.ContentType == "image").ToString().ToLower())">Hình ảnh</option>
+                    <option value="video" selected="@((Model.ContentType == "video").ToString().ToLower())">Video</option>
+                </select>
                 <span asp-validation-for="ContentType" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ContentData" class="control-label"></label>
-                <input asp-for="ContentData" class="form-control" />
-                <span asp-validation-for="ContentData" class="text-danger"></span>
+
+            <div class="form-group" id="textInput">
+                <label>Nội dung văn bản</label>
+                <textarea asp-for="ContentData" class="form-control" rows="4"></textarea>
             </div>
+
+            <div class="form-group d-none" id="imageInput">
+                <label>Chọn ảnh mới (hoặc để trống nếu giữ ảnh cũ)</label>
+                <input type="file" name="imageFile" class="form-control" />
+                @if (!string.IsNullOrEmpty(Model.ContentData))
+                {
+                    <p>Ảnh hiện tại:</p>
+                    <img src="@Model.ContentData" width="200" />
+                }
+            </div>
+
+            <div class="form-group d-none" id="videoInput">
+                <label>Link video</label>
+                <input type="text" name="videoUrl" class="form-control" value="@Model.ContentData" />
+            </div>
+
             <div class="form-group">
                 <label asp-for="LessonID" class="control-label"></label>
-                <select asp-for="LessonID" class="form-control" asp-items="ViewBag.LessonID"></select>
+                <select asp-for="LessonID" class="form-control" asp-items="ViewBag.Lessons"></select>
                 <span asp-validation-for="LessonID" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mt-3">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
@@ -40,5 +62,26 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function toggleInputs() {
+            const type = document.getElementById('contentType').value;
+            document.getElementById('textInput').classList.add('d-none');
+            document.getElementById('imageInput').classList.add('d-none');
+            document.getElementById('videoInput').classList.add('d-none');
+
+            if (type === 'text') {
+                document.getElementById('textInput').classList.remove('d-none');
+            } else if (type === 'image') {
+                document.getElementById('imageInput').classList.remove('d-none');
+            } else if (type === 'video') {
+                document.getElementById('videoInput').classList.remove('d-none');
+            }
+        }
+
+        document.getElementById('contentType').addEventListener('change', toggleInputs);
+        window.onload = toggleInputs;
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

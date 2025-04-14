@@ -4,39 +4,69 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
-
-<h4>LessonContent</h4>
+<h1>Thêm Nội Dung Bài Học</h1>
 <hr />
+
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+    <div class="col-md-6">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="ContentType" class="control-label"></label>
-                <input asp-for="ContentType" class="form-control" />
-                <span asp-validation-for="ContentType" class="text-danger"></span>
+
+            <div class="form-group mb-3">
+                <label asp-for="ContentType">Loại nội dung</label>
+                <select asp-for="ContentType" class="form-control" id="contentTypeSelect">
+                    <option value="">-- Chọn loại nội dung --</option>
+                    <option value="text">Văn bản</option>
+                    <option value="image">Hình ảnh</option>
+                    <option value="video">Video</option>
+                </select>
             </div>
-            <div class="form-group">
-                <label asp-for="ContentData" class="control-label"></label>
-                <input asp-for="ContentData" class="form-control" />
-                <span asp-validation-for="ContentData" class="text-danger"></span>
+
+            <!-- Văn bản -->
+            <div class="form-group mb-3" id="textInput" style="display:none;">
+                <label>Nội dung văn bản</label>
+                <textarea name="TextContent" class="form-control" rows="5"></textarea>
             </div>
-            <div class="form-group">
-                <label asp-for="LessonID" class="control-label"></label>
-                <select asp-for="LessonID" class ="form-control" asp-items="ViewBag.LessonID"></select>
+
+            <!-- Ảnh -->
+            <div class="form-group mb-3" id="imageInput" style="display:none;">
+                <label>Chọn ảnh</label>
+                <input type="file" name="ImageFile" class="form-control" accept="image/*" />
             </div>
+
+            <!-- Video -->
+            <div class="form-group mb-3" id="videoInput" style="display:none;">
+                <label>Chọn video hoặc nhập link</label>
+                <input type="file" name="VideoFile" class="form-control" accept="video/*" />
+                <input type="text" name="VideoUrl" class="form-control mt-1" placeholder="https://youtube.com/..." />
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="LessonID">Chọn bài học</label>
+                <select asp-for="LessonID" class="form-control" asp-items="ViewBag.Lessons"></select>
+            </div>
+
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Tạo mới" class="btn btn-success" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" class="btn btn-secondary mt-3">← Quay lại danh sách</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        document.getElementById("contentTypeSelect").addEventListener("change", function () {
+            let type = this.value;
+            document.getElementById("textInput").style.display = type === "text" ? "block" : "none";
+            document.getElementById("imageInput").style.display = type === "image" ? "block" : "none";
+            document.getElementById("videoInput").style.display = type === "video" ? "block" : "none";
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
