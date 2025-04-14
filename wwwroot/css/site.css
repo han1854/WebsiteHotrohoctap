@@ -1,4 +1,4 @@
-html {
+﻿html {
     font-size: 14px;
 }
 
@@ -129,4 +129,23 @@ body {
 }
 .card-link {
     text-decoration: none;
+}
+
+.card {
+    width: 100%; /* Đảm bảo card chiếm toàn bộ chiều rộng của cột */
+    max-width: 100%; /* Đặt max-width là 100% để card không bị giới hạn về độ rộng */
+    min-width: 300px; /* Đặt min-width để card không bị co lại quá nhỏ */
+    margin: 0 auto; /* Căn giữa card trong cột */
+}
+
+.card-body {
+    padding: 20px; /* Tăng padding bên trong card */
+}
+
+.card-title {
+    font-size: 1.25rem; /* Tăng kích thước chữ của tên khóa học */
+}
+
+.card-img-top {
+    height: 250px; /* Tăng chiều cao của hình ảnh trong card */
 }

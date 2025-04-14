@@ -4,31 +4,27 @@
     ViewData["Title"] = "Cập nhật khóa học";
 }
 
-<h1 class="text-center">Cập nhật khóa học</h1>
+<h2 class="text-center">Cập nhật khóa học</h2>
 
 <div class="row justify-content-center">
     <div class="col-md-6">
         <form asp-action="Update">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-            <!-- Hidden field for CourseID -->
             <input type="hidden" asp-for="CourseID" />
 
-            <!-- CourseName Input -->
             <div class="form-group mb-3">
                 <label asp-for="CourseName" class="control-label"></label>
                 <input asp-for="CourseName" class="form-control" placeholder="Nhập tên khóa học" />
                 <span asp-validation-for="CourseName" class="text-danger"></span>
             </div>
 
-            <!-- Description Input -->
             <div class="form-group mb-3">
                 <label asp-for="Description" class="control-label"></label>
                 <textarea asp-for="Description" class="form-control" placeholder="Mô tả khóa học" rows="3"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
 
-            <!-- Submit Button -->
             <div class="form-group">
                 <button type="submit" class="btn btn-primary w-100">Lưu thay đổi</button>
             </div>

@@ -2,56 +2,70 @@
 
 @{
     ViewData["Title"] = "Chi tiết khóa học";
-    Layout = "_Layout"; // Giữ layout nếu bạn có
+    Layout = "_Layout";
 }
 
 <style>
     body {
-        background: linear-gradient(to bottom right, #1e3a8a, #93c5fd); /* Xanh đậm sang nhạt */
-        color: white;
+        background-color: #f0f9ff;
     }
 
-    .bg-white {
-        background-color: rgba(255, 255, 255, 0.1) !important; /* Nền card trong suốt nhẹ */
-        backdrop-filter: blur(10px); /* Hiệu ứng mờ */
-        border-radius: 12px;
+    .course-card {
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        padding: 40px;
     }
 
-    .text-dark {
-        color: white !important;
+    .course-title {
+        font-weight: 700;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        color: #1e3a8a;
     }
 
-    a.btn-link {
-        color: #e0f2fe;
+    .course-description {
+        font-size: 1.1rem;
+        color: #334155;
+    }
+
+    .btn-join {
+        padding: 10px 30px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 50px;
     }
 
     .btn-outline-warning {
-        color: #facc15;
-        border-color: #facc15;
+        border-radius: 50px;
     }
 
-        .btn-outline-warning:hover {
-            background-color: #facc15;
-            color: #1e3a8a;
+    .back-link {
+        color: #1e3a8a;
+        text-decoration: none;
+    }
+
+        .back-link:hover {
+            text-decoration: underline;
         }
 </style>
-
 
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div>
+            <div class="course-card">
                 <!-- Tên khóa học -->
-                <h2 class="fw-bold mb-4 border-bottom pb-2">@Model.CourseName</h2>
+                <h2 class="course-title">@Model.CourseName</h2>
 
                 <!-- Mô tả khóa học -->
-                <p class="fs-5">@Model.Description</p>
+                <p class="course-description">@Model.Description</p>
 
                 <!-- Nút tham gia -->
                 <div class="text-center my-4">
                     <form asp-controller="Enrollment" asp-action="Register" method="post">
                         <input type="hidden" name="courseId" value="@Model.CourseID" />
-                        <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 py-2 fw-semibold shadow">
+                        <button type="submit" class="btn btn-primary btn-lg btn-join shadow">
                             Tham gia khóa học
                         </button>
                     </form>
@@ -62,10 +76,10 @@
                     @if (User.IsInRole("Admin"))
                     {
                         <a asp-action="Update" asp-route-id="@Model.CourseID" class="btn btn-outline-warning btn-sm rounded-pill">
-                            Sửa
+                           Sửa
                         </a>
                     }
-                    <a asp-action="Index" class="btn btn-link text-decoration-none">← Trở lại danh sách khóa học</a>
+                    <a asp-action="Index" class="back-link">← Quay lại danh sách</a>
                 </div>
             </div>
         </div>
