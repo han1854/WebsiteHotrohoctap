@@ -1,0 +1,73 @@
+﻿@model WebsiteHotrohoctap.Models.Course
+
+@{
+    ViewData["Title"] = "Chi tiết khóa học";
+    Layout = "_Layout"; // Giữ layout nếu bạn có
+}
+
+<style>
+    body {
+        background: linear-gradient(to bottom right, #1e3a8a, #93c5fd); /* Xanh đậm sang nhạt */
+        color: white;
+    }
+
+    .bg-white {
+        background-color: rgba(255, 255, 255, 0.1) !important; /* Nền card trong suốt nhẹ */
+        backdrop-filter: blur(10px); /* Hiệu ứng mờ */
+        border-radius: 12px;
+    }
+
+    .text-dark {
+        color: white !important;
+    }
+
+    a.btn-link {
+        color: #e0f2fe;
+    }
+
+    .btn-outline-warning {
+        color: #facc15;
+        border-color: #facc15;
+    }
+
+        .btn-outline-warning:hover {
+            background-color: #facc15;
+            color: #1e3a8a;
+        }
+</style>
+
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div>
+                <!-- Tên khóa học -->
+                <h2 class="fw-bold mb-4 border-bottom pb-2">@Model.CourseName</h2>
+
+                <!-- Mô tả khóa học -->
+                <p class="fs-5">@Model.Description</p>
+
+                <!-- Nút tham gia -->
+                <div class="text-center my-4">
+                    <form asp-controller="Enrollment" asp-action="Register" method="post">
+                        <input type="hidden" name="courseId" value="@Model.CourseID" />
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 py-2 fw-semibold shadow">
+                            Tham gia khóa học
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Nút điều hướng -->
+                <div class="d-flex justify-content-between">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Update" asp-route-id="@Model.CourseID" class="btn btn-outline-warning btn-sm rounded-pill">
+                            Sửa
+                        </a>
+                    }
+                    <a asp-action="Index" class="btn btn-link text-decoration-none">← Trở lại danh sách khóa học</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

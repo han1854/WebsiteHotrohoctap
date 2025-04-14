@@ -1,0 +1,42 @@
+﻿@model WebsiteHotrohoctap.Models.Exam
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Exam</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ExamName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ExamName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TotalMarks)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TotalMarks)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Lesson)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Lesson.LessonName)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.ExamID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

@@ -1,0 +1,132 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+}
+
+.navbar {
+    background: linear-gradient(to right, #0077b6, #00b4d8);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-nav .nav-link {
+    color: white !important;
+    font-weight: 500;
+    padding: 10px 20px;
+    transition: color 0.3s;
+}
+
+    .navbar-nav .nav-link:hover {
+        color: #ffdd57 !important;
+        text-decoration: none;
+    }
+
+.welcome-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    background: linear-gradient(to right, #0077b6, #00b4d8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 3rem;
+}
+
+.feature-box {
+    background: linear-gradient(135deg, #ffffff, #d9f3fb);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease-in-out;
+    height: 100%;
+}
+
+    .feature-box:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+    }
+
+.feature-title {
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #023e8a;
+    margin-bottom: 10px;
+}
+
+.feature-text {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #495057;
+}
+
+.feature-row {
+    row-gap: 30px;
+}
+
+.table {
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+    .table thead th {
+        background: linear-gradient(to right, #00b4d8, #0077b6);
+        color: white;
+        text-align: center;
+        font-weight: bold;
+        vertical-align: middle;
+    }
+
+    .table tbody td {
+        vertical-align: middle;
+        text-align: center;
+        color: #333;
+    }
+
+.btn {
+    transition: all 0.2s ease-in-out;
+    border-radius: 8px;
+}
+
+    .btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+.btn-sm {
+    font-size: 0.875rem;
+    padding: 5px 12px;
+}
+
+.text-gradient {
+    background: linear-gradient(to right, #0077b6, #00b4d8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(to right, #0077b6, #00b4d8) !important;
+    color: white;
+}
+.card-link {
+    text-decoration: none;
+}

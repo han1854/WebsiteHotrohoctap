@@ -1,0 +1,46 @@
+﻿@model WebsiteHotrohoctap.Models.Course
+
+@{
+    ViewData["Title"] = "Xóa khóa học";
+    Layout = "_Layout";
+}
+
+<style>
+    body {
+        background-color: #f8fafc;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="bg-white p-5 rounded shadow">
+                <h2 class="text-center text-danger fw-bold mb-4">⚠️ Xác nhận xóa khóa học</h2>
+
+                <p class="text-center text-muted mb-4">Bạn có chắc chắn muốn xóa khóa học này? Thao tác này không thể hoàn tác.</p>
+
+                <!-- Thông tin khóa học -->
+                <dl class="row mb-4">
+                    <dt class="col-sm-3 fw-semibold">Tên khóa học</dt>
+                    <dd class="col-sm-9">@Model.CourseName</dd>
+
+                    <dt class="col-sm-3 fw-semibold">Mô tả</dt>
+                    <dd class="col-sm-9">@Model.Description</dd>
+                </dl>
+
+                <form asp-action="DeleteConfirmed" method="post">
+                    <input type="hidden" asp-for="CourseID" />
+                    <input type="submit" value="Xóa khóa học" class="btn btn-outline-danger btn-lg rounded-pill px-4 fw-semibold shadow-sm" />
+                    <a asp-action="Index" class="btn btn-outline-secondary btn-lg rounded-pill px-4 fw-semibold">Quay lại</a>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

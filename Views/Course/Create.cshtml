@@ -1,0 +1,44 @@
+﻿@model WebsiteHotrohoctap.Models.Course
+
+@{
+    ViewData["Title"] = "Thêm mới khóa học";
+}
+
+<h1 class="text-center">Thêm mới khóa học</h1>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- Tên khóa học Input -->
+            <div class="form-group mb-3">
+                <label asp-for="CourseName" class="control-label">Tên khóa học</label>
+                <input asp-for="CourseName" class="form-control" placeholder="Nhập tên khóa học" />
+                <span asp-validation-for="CourseName" class="text-danger"></span>
+            </div>
+
+            <!-- Mô tả khóa học Input -->
+            <div class="form-group mb-3">
+                <label asp-for="Description" class="control-label">Mô tả khóa học</label>
+                <textarea asp-for="Description" class="form-control" placeholder="Nhập mô tả khóa học" rows="5"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary w-100 btn-lg rounded-pill shadow-sm">Tạo mới</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="text-center mt-3">
+    <a asp-action="Index" class="btn btn-link">Quay lại danh sách khóa học</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

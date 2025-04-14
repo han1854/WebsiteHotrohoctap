@@ -1,0 +1,40 @@
+﻿@model List<WebsiteHotrohoctap.Models.User>
+
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<h2>User Management</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Change Role</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Email</td>
+                <td>@user.CurrentRole</td>
+                <td>
+                    <form asp-action="UpdateRole" method="post">
+                        <input type="hidden" name="userId" value="@user.Id" />
+                        <select name="newRole" class="form-control">
+                            @foreach (var role in user.Roles)
+                            {
+                                var selected = role == user.CurrentRole ? "selected" : "";
+
+                                <option value="@role" selected="@selected">@role</option>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary mt-1">Update</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
