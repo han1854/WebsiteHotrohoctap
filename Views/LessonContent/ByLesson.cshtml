@@ -1,73 +1,42 @@
-﻿@model List<WebsiteHotrohoctap.Models.LessonContent>
+﻿@model IEnumerable<WebsiteHotrohoctap.Models.LessonContent>
 
 @{
     ViewData["Title"] = "Nội dung bài học";
     var lesson = ViewBag.Lesson as WebsiteHotrohoctap.Models.Lesson;
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4 text-primary">📘 Nội dung của bài học: @lesson.LessonName</h2>
+<h2 class="mb-4 text-center">@lesson?.LessonName</h2>
 
-    @if (Model == null || Model.Count == 0)
+<div class="container">
+    @foreach (var content in Model)
     {
-        <div class="alert alert-info">Chưa có nội dung nào cho bài học này.</div>
-    }
-    else
-    {
-        <div class="row">
-            @foreach (var content in Model)
-            {
-                <div class="col-md-12 mb-4">
-                    <div class="card shadow">
-                        <div class="card-header bg-light">
-                            <strong>Loại nội dung:</strong> @content.ContentType
+        <div class="mb-4">
+            <div class="text-center">
+                @if (content.ContentType == "text")
+                {
+                    <p class="card-text text-start" style="white-space: pre-line;">@content.ContentData</p>
+                }
+                else if (content.ContentType == "image")
+                {
+                    <img src="@content.ContentData" class="img-fluid rounded" style="max-height: 400px; object-fit: contain;" alt="Ảnh bài học" />
+                }
+                else if (content.ContentType == "video")
+                {
+                    if (!string.IsNullOrWhiteSpace(content.ContentData) && content.ContentData.Contains("youtube"))
+                    {
+                        <div class="ratio ratio-16x9" style="max-width: 720px; margin: auto;">
+                            <iframe src="@content.ContentData" allowfullscreen style="border: none;"></iframe>
                         </div>
-                        <div class="card-body">
-                            @switch (content.ContentType?.ToLower())
-                            {
-                                case "text":
-                                    <div class="content-text">
-                                        @Html.Raw(content.ContentData)
-                                    </div>
-                                    break;
-
-                                case "image":
-                                    <img src="@content.ContentData"
-                                         class="img-fluid rounded border"
-                                         alt="Hình ảnh bài học" />
-                                    break;
-
-                                case "video":
-                                    if (!string.IsNullOrEmpty(content.ContentData) && content.ContentData.Contains("youtube.com"))
-                                    {
-                                        var videoId = content.ContentData.Split("v=").Last();
-                                        <div class="ratio ratio-16x9">
-                                            <iframe src="https://www.youtube.com/embed/@videoId"
-                                                    frameborder="0"
-                                                    allowfullscreen></iframe>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <video controls class="w-100 rounded border">
-                                            <source src="@content.ContentData" type="video/mp4" />
-                                            Trình duyệt của bạn không hỗ trợ video.
-                                        </video>
-                                    }
-                                    break;
-
-                                default:
-                                    <p class="text-muted">Loại nội dung không được hỗ trợ.</p>
-                                    break;
-                            }
-                        </div>
-                    </div>
-                </div>
-            }
+                    }
+                    else
+                    {
+                        <video controls class="rounded" style="width: 100%; max-width: 720px; max-height: 400px; object-fit: contain; margin: auto; display: block;">
+                            <source src="@content.ContentData" type="video/mp4" />
+                            Trình duyệt không hỗ trợ video.
+                        </video>
+                    }
+                }
+            </div>
         </div>
     }
-
-    <a asp-controller="Lesson" asp-action="ByCourse" asp-route-id="@lesson.CourseID" class="btn btn-outline-secondary mt-3">
-        ← Quay lại danh sách bài học
-    </a>
 </div>

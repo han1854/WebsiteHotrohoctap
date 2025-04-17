@@ -14,7 +14,7 @@
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
@@ -23,7 +23,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
                         </li>
                         <!--<li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>-->
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Course" asp-action="Index">Khoá Học</a>
@@ -35,23 +35,20 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="Index">Diễn Đàn</a>
                         </li>
                     </ul>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Quản lý bài học
-                        </a>
-                        <ul class="dropdown-menu text-white">
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Quản lí người dùng</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" asp-area="" asp-controller="Lesson" asp-action="Index">Quản lí bài học</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" asp-area="" asp-controller="LessonContent" asp-action="Index">Quản lí nội dung bài học</a>
-                            </li>
-                        </ul>
-                    </li>
-					<partial name="_LoginPartial" />
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="lessonDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Quản lý bài học
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="lessonDropdown">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="User" asp-action="Index">Quản lí người dùng</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Lesson" asp-action="Index">Quản lí bài học</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="LessonContent" asp-action="Index">Quản lí nội dung bài học</a></li>
+                            </ul>
+                        </li>
+                    }
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
