@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 using WebsiteHotrohoctap.Models;
 using WebsiteHotrohoctap.Repositories;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace WebsiteHotrohoctap.Controllers
 {
@@ -17,7 +19,7 @@ namespace WebsiteHotrohoctap.Controllers
             _lessonRepository = lessonRepository;
         }
 
-
+        [Authorize(Roles = SD.Role_Admin)]
         public async Task<IActionResult> Index()
         {
             var lessons = await _lessonRepository.GetAllAsync();

@@ -1,0 +1,22 @@
+{
+    "LessonName": "Cây (Tree)",
+    "LessonDescription": "Cây là một cấu trúc dữ liệu phi tuyến tính gồm các nút (node) liên kết theo quan hệ cha-con, thường được sử dụng để tổ chức dữ liệu phân cấp.",
+    "LessonContents": [
+        {
+            "ContentType": "Text",
+            "ContentData": "<p><strong>Khái niệm:</strong> Cây là một cấu trúc dữ liệu dạng phân cấp. Mỗi cây có một nút gốc (root), từ đó các nút khác được liên kết theo cấu trúc cha-con.</p><p><strong>Đặc điểm:</strong></p><ul><li><strong>Nút gốc (Root):</strong> Là nút đầu tiên của cây, không có nút cha.</li><li><strong>Nút lá (Leaf):</strong> Là nút không có nút con.</li><li><strong>Chiều cao của cây:</strong> Là độ dài đường đi lớn nhất từ nút gốc đến nút lá.</li><li><strong>Cây nhị phân:</strong> Mỗi nút có tối đa hai nút con: trái và phải.</li></ul>"
+        },
+        {
+            "ContentType": "Text",
+            "ContentData": "<p><strong>Phân loại cây:</strong></p><ul><li><strong>Cây tổng quát:</strong> Các nút có số lượng nút con không giới hạn.</li><li><strong>Cây nhị phân:</strong> Cây mà mỗi nút có tối đa hai nút con.</li><li><strong>Cây tìm kiếm nhị phân:</strong> Các giá trị nhỏ hơn nằm ở nhánh trái, các giá trị lớn hơn nằm ở nhánh phải.</li><li><strong>Cây cân bằng:</strong> Cây có khoảng cách giữa các nhánh không chênh lệch quá lớn.</li></ul><p><strong>Ứng dụng:</strong></p><ul><li>Cây quyết định trong học máy.</li><li>Biểu diễn dữ liệu phân cấp như thư mục hoặc tổ chức.</li><li>Tìm kiếm dữ liệu nhanh.</li></ul>"
+        },
+        {
+            "ContentType": "Text",
+            "ContentData": "<h3>Ví dụ</h3><pre><code>// Cấu trúc cây nhị phân\nstruct TreeNode {\n    int val;\n    TreeNode* left;\n    TreeNode* right;\n};\n\n// Tạo một cây nhị phân\nTreeNode* root = new TreeNode();\nroot->val = 10;\nroot->left = new TreeNode();\nroot->left->val = 5;\nroot->right = new TreeNode();\nroot->right->val = 15;\n\n// Duyệt cây Inorder\nvoid inorderTraversal(TreeNode* node) {\n    if (node == nullptr) return;\n    inorderTraversal(node->left);\n    printf(\"%d \", node->val);\n    inorderTraversal(node->right);\n}</code></pre>"
+        },
+        {
+            "ContentType": "Video",
+            "ContentData": "https://www.youtube.com/embed/TlEqqkszRtQ"
+        }
+    ]
+}

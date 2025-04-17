@@ -1,0 +1,22 @@
+{
+    "LessonName": "Danh sách liên kết",
+    "LessonDescription": "Danh sách liên kết là cấu trúc dữ liệu trong đó mỗi phần tử (node) chứa dữ liệu và con trỏ trỏ đến phần tử tiếp theo, cho phép thêm hoặc xóa phần tử một cách linh hoạt.",
+    "LessonContents": [
+        {
+            "ContentType": "Text",
+            "ContentData": "<p><strong>Khái niệm:</strong> Danh sách liên kết là cấu trúc dữ liệu gồm các nút (node) liên kết với nhau. Mỗi nút chứa dữ liệu và con trỏ trỏ đến nút tiếp theo trong danh sách.</p><p><strong>Ưu điểm:</strong></p><ul><li>Không yêu cầu kích thước cố định.</li><li>Dễ dàng thêm và xóa phần tử ở bất kỳ vị trí nào.</li></ul><p><strong>Nhược điểm:</strong></p><ul><li>Tốn thêm bộ nhớ cho các con trỏ.</li><li>Truy cập phần tử chậm hơn so với mảng.</li></ul>"
+        },
+        {
+            "ContentType": "Text",
+            "ContentData": "<p><strong>Các loại danh sách liên kết:</strong></p><ul><li><strong>Danh sách liên kết đơn:</strong> Mỗi nút chỉ có một con trỏ trỏ đến nút tiếp theo.</li><li><strong>Danh sách liên kết đôi:</strong> Mỗi nút có hai con trỏ: trỏ đến nút trước và nút sau.</li><li><strong>Danh sách liên kết vòng:</strong> Nút cuối cùng trỏ lại nút đầu tiên, tạo thành một vòng khép kín.</li></ul>"
+        },
+        {
+            "ContentType": "Text",
+            "ContentData": "<h3>Ví dụ</h3><pre><code>// Danh sách liên kết đơn giản\nstruct Node {\n    int data;\n    Node* next;\n};\n\n// Tạo danh sách liên kết\nNode* head = new Node{1, nullptr};\nhead->next = new Node{2, nullptr};\nhead->next->next = new Node{3, nullptr};\n\n// Duyệt danh sách liên kết\nNode* temp = head;\nwhile (temp != nullptr) {\n    printf(\"%d -> \", temp->data);\n    temp = temp->next;\n}\nprintf(\"NULL\\n\");</code></pre>"
+        },
+        {
+            "ContentType": "Video",
+            "ContentData": "https://www.youtube.com/embed/gzVTutcs3TY"
+        }
+    ]
+}

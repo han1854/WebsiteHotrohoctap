@@ -1,73 +1,37 @@
-﻿@model List<WebsiteHotrohoctap.Models.LessonContent>
+﻿@model WebsiteHotrohoctap.Models.Lesson
 
-@{
-    ViewData["Title"] = "Nội dung bài học";
-    var lesson = ViewBag.Lesson as WebsiteHotrohoctap.Models.Lesson;
-}
+<div class="lesson-container">
+    <h1>@Model.LessonName</h1>
+    <p><strong>Mô tả:</strong> @Model.LessonDescription</p>
 
-<div class="container mt-4">
-    <h2 class="mb-4 text-primary">📘 Nội dung của bài học: @lesson.LessonName</h2>
-
-    @if (Model == null || Model.Count == 0)
-    {
-        <div class="alert alert-info">Chưa có nội dung nào cho bài học này.</div>
-    }
-    else
-    {
-        <div class="row">
-            @foreach (var content in Model)
+    <!-- Hiển thị nội dung lý thuyết -->
+    <div class="theory-section">
+        @if (Model.LessonContents != null && Model.LessonContents.Any(c => c.ContentType == "Text"))
+        {
+            @foreach (var content in Model.LessonContents.Where(c => c.ContentType == "Text"))
             {
-                <div class="col-md-12 mb-4">
-                    <div class="card shadow">
-                        <div class="card-header bg-light">
-                            <strong>Loại nội dung:</strong> @content.ContentType
-                        </div>
-                        <div class="card-body">
-                            @switch (content.ContentType?.ToLower())
-                            {
-                                case "text":
-                                    <div class="content-text">
-                                        @Html.Raw(content.ContentData)
-                                    </div>
-                                    break;
-
-                                case "image":
-                                    <img src="@content.ContentData"
-                                         class="img-fluid rounded border"
-                                         alt="Hình ảnh bài học" />
-                                    break;
-
-                                case "video":
-                                    if (!string.IsNullOrEmpty(content.ContentData) && content.ContentData.Contains("youtube.com"))
-                                    {
-                                        var videoId = content.ContentData.Split("v=").Last();
-                                        <div class="ratio ratio-16x9">
-                                            <iframe src="https://www.youtube.com/embed/@videoId"
-                                                    frameborder="0"
-                                                    allowfullscreen></iframe>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <video controls class="w-100 rounded border">
-                                            <source src="@content.ContentData" type="video/mp4" />
-                                            Trình duyệt của bạn không hỗ trợ video.
-                                        </video>
-                                    }
-                                    break;
-
-                                default:
-                                    <p class="text-muted">Loại nội dung không được hỗ trợ.</p>
-                                    break;
-                            }
-                        </div>
-                    </div>
-                </div>
+                @Html.Raw(content.ContentData)
             }
-        </div>
-    }
+        }
+        else
+        {
+            <p>Không có nội dung lý thuyết.</p>
+        }
+    </div>
 
-    <a asp-controller="Lesson" asp-action="ByCourse" asp-route-id="@lesson.CourseID" class="btn btn-outline-secondary mt-3">
-        ← Quay lại danh sách bài học
-    </a>
+    <!-- Hiển thị video -->
+    <div class="video-section">
+        <h2>Video bài giảng</h2>
+        @if (Model.LessonContents != null && Model.LessonContents.Any(c => c.ContentType == "Video"))
+        {
+            @foreach (var content in Model.LessonContents.Where(c => c.ContentType == "Video"))
+            {
+                <iframe src="@content.ContentData" allowfullscreen></iframe>
+            }
+        }
+        else
+        {
+            <p>Không có video hướng dẫn.</p>
+        }
+    </div>
 </div>
