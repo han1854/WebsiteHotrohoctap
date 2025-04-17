@@ -33,74 +33,98 @@ namespace WebsiteHotrohoctap.Controllers
         }
         [HttpPost]
         [Authorize(Roles = SD.Role_Admin)]
-        [HttpPost]
-        [Authorize(Roles = SD.Role_Admin)]
-        [HttpPost]
-        public async Task<IActionResult> Create(
-    LessonContent lessoncontent,
-    IFormFile? ImageFile,
-    IFormFile? VideoFile,
-    string? VideoUrl,
-    string? TextContent)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(LessonContent lessoncontent, IFormFile? ImageFile, IFormFile? VideoFile, string? VideoUrl, string? TextContent)
         {
-            Console.WriteLine("ContentType: " + lessoncontent.ContentType);
-            Console.WriteLine("TextContent: " + TextContent);
-            Console.WriteLine("ImageFile: " + (ImageFile != null ? ImageFile.FileName : "null"));
-            Console.WriteLine("VideoFile: " + (VideoFile != null ? VideoFile.FileName : "null"));
-            Console.WriteLine("VideoUrl: " + VideoUrl);
-
-            // Test trước: chỉ xử lý nếu hợp lệ
             if (lessoncontent.ContentType == "text")
             {
-                lessoncontent.ContentData = TextContent;
+                if (string.IsNullOrWhiteSpace(TextContent))
+                {
+                    ModelState.AddModelError("TextContent", "Nhập nội dung văn bản.");
+                }
+                else
+                {
+                    lessoncontent.ContentData = TextContent;
+                }
             }
-            else if (lessoncontent.ContentType == "image" && ImageFile != null)
+            else if (lessoncontent.ContentType == "image")
             {
-                string path = await SaveImage(ImageFile);
-                lessoncontent.ContentData = path;
+                if (ImageFile != null && ImageFile.Length > 0)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(ImageFile.FileName);
+                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+                    Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ImageFile.CopyToAsync(stream);
+                    }
+                    lessoncontent.ContentData = "/images/" + fileName;
+                }
+                else
+                {
+                    ModelState.AddModelError("ImageFile", "Chọn một file ảnh.");
+                }
             }
             else if (lessoncontent.ContentType == "video")
             {
-                if (VideoFile != null)
+                if (VideoFile != null && VideoFile.Length > 0)
                 {
-                    string path = await SaveVideo(VideoFile);
-                    lessoncontent.ContentData = path;
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(VideoFile.FileName);
+                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/videos", fileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await VideoFile.CopyToAsync(stream);
+                    }
+                    lessoncontent.ContentData = "/videos/" + fileName;
                 }
                 else if (!string.IsNullOrWhiteSpace(VideoUrl))
                 {
                     lessoncontent.ContentData = VideoUrl;
                 }
+                else
+                {
+                    ModelState.AddModelError("VideoFile", "Chọn file hoặc nhập link video.");
+                }
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                await _lessoncontentRepository.AddAsync(lessoncontent);
-                return RedirectToAction("Index");
+                ViewBag.Lessons = new SelectList(await _lessonRepository.GetAllAsync(), "LessonID", "LessonName");
+                return View(lessoncontent);
             }
 
-            var lessons = await _lessonRepository.GetAllAsync();
-            ViewBag.Lessons = new SelectList(lessons, "LessonID", "LessonName");
-            return View(lessoncontent);
+            await _lessoncontentRepository.AddAsync(lessoncontent);
+            foreach (var modelState in ModelState)
+            {
+                foreach (var error in modelState.Value.Errors)
+                {
+                    Console.WriteLine($"Lỗi ở {modelState.Key}: {error.ErrorMessage}");
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
-
-
-        private async Task<string> SaveImage(IFormFile image)
+        private async Task<string> SaveImageAsync(IFormFile image)
         {
-            var savePath = Path.Combine("wwwroot/images", image.FileName);
-            using (var fileStream = new FileStream(savePath, FileMode.Create))
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+
+            using (var stream = new FileStream(path, FileMode.Create))
             {
-                await image.CopyToAsync(fileStream);
+                await image.CopyToAsync(stream);
             }
-            return "/images/" + image.FileName; // Trả về đường dẫn tương đối 
+
+            return "/images/" + fileName;
         }
 
-        private async Task<string> SaveVideo(IFormFile video)
+        private async Task<string> SaveVideoAsync(IFormFile video)
         {
-            var fileName = Path.GetFileName(video.FileName);
-            var savePath = Path.Combine("wwwroot/videos", fileName);
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(video.FileName);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/videos", fileName);
 
-            using (var stream = new FileStream(savePath, FileMode.Create))
+            using (var stream = new FileStream(path, FileMode.Create))
             {
                 await video.CopyToAsync(stream);
             }
@@ -108,7 +132,8 @@ namespace WebsiteHotrohoctap.Controllers
             return "/videos/" + fileName;
         }
 
-        public IActionResult Details(int lessonId)
+
+        public async Task<IActionResult> Details(int id)
         {
             // Kiểm tra lessonId hợp lệ
             if (lessonId <= 0)
@@ -166,7 +191,7 @@ namespace WebsiteHotrohoctap.Controllers
                 return RedirectToAction(nameof(Index));
             }
             var lessons = await _lessonRepository.GetAllAsync();
-            ViewBag.Lessons = new SelectList(lessons, "Id", "LessonName");
+            ViewBag.Lessons = new SelectList(lessons, "LessonID", "LessonName");
             return View(lessoncontent);
         }
 
@@ -189,35 +214,35 @@ namespace WebsiteHotrohoctap.Controllers
         }
 
         public IActionResult ByLesson(int lessonId)
-        {
-            // Kiểm tra lessonId hợp lệ
-            if (lessonId <= 0)
-            {
-                return BadRequest("ID bài học không hợp lệ.");
-            }
+{
+    // Kiểm tra lessonId hợp lệ
+    if (lessonId <= 0)
+    {
+        return BadRequest("ID bài học không hợp lệ.");
+    }
 
-            // Đường dẫn tới tệp JSON trong thư mục wwwroot/json
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/json", $"lesson_{lessonId}.json");
+    // Đường dẫn tới tệp JSON trong thư mục wwwroot/json
+    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/json", $"lesson_{lessonId}.json");
 
-            if (!System.IO.File.Exists(filePath))
-            {
-                return NotFound($"Không tìm thấy bài học với ID {lessonId}.");
-            }
+    if (!System.IO.File.Exists(filePath))
+    {
+        return NotFound($"Không tìm thấy bài học với ID {lessonId}.");
+    }
 
-            // Đọc nội dung JSON
-            string jsonData = System.IO.File.ReadAllText(filePath);
+    // Đọc nội dung JSON
+    string jsonData = System.IO.File.ReadAllText(filePath);
 
-            // Chuyển đổi JSON thành đối tượng Lesson
-            Lesson lesson = JsonConvert.DeserializeObject<Lesson>(jsonData);
+    // Chuyển đổi JSON thành đối tượng Lesson
+    Lesson lesson = JsonConvert.DeserializeObject<Lesson>(jsonData);
 
-            // Kiểm tra lesson có tồn tại
-            if (lesson == null)
-            {
-                return NotFound($"Không có nội dung bài học với ID {lessonId}.");
-            }
+    // Kiểm tra lesson có tồn tại
+    if (lesson == null)
+    {
+        return NotFound($"Không có nội dung bài học với ID {lessonId}.");
+    }
 
-            // Truyền toàn bộ đối tượng Lesson vào View
-            return View(lesson);
-        }
+    // Truyền toàn bộ đối tượng Lesson vào View
+    return View(lesson);
+}
     }
 }
