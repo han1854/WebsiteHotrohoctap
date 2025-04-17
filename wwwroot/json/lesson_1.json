@@ -1,0 +1,22 @@
+{
+    "LessonName": "Mảng (Array)",
+    "LessonDescription": "Mảng là một cấu trúc dữ liệu cơ bản, dùng để lưu trữ một tập hợp các phần tử có cùng kiểu dữ liệu trong bộ nhớ liên tiếp.",
+    "LessonContents": [
+        {
+            "ContentType": "Text",
+            "ContentData": "<p><strong>Khái niệm:</strong> Mảng là tập hợp các phần tử có cùng kiểu dữ liệu được lưu trữ liên tiếp trong bộ nhớ. Mỗi phần tử có thể được truy cập bằng chỉ số.</p><p><strong>Ưu điểm:</strong></p><ul><li>Truy cập nhanh thông qua chỉ số.</li><li>Thích hợp cho các thuật toán cần truy xuất trực tiếp.</li></ul><p><strong>Nhược điểm:</strong></p><ul><li>Kích thước cố định.</li><li>Khó khăn khi thêm hoặc xóa phần tử giữa mảng.</li></ul>"
+        },
+        {
+            "ContentType": "Text",
+            "ContentData": "<p><strong>Ứng dụng:</strong></p><ul><li>Biểu diễn dữ liệu tĩnh.</li><li>Các thuật toán sắp xếp và tìm kiếm.</li><li>Tạo các cấu trúc phức tạp hơn như ma trận.</li></ul>"
+        },
+        {
+            "ContentType": "Text",
+            "ContentData": "<h3>Ví dụ</h3><pre><code>// Khởi tạo một mảng trong C++\nint arr[5] = {1, 2, 3, 4, 5};\n\n// Truy cập phần tử thứ 2 (chỉ số 1)\nprintf(\"%d\\n\", arr[1]);\n\n// Duyệt qua mảng\nfor (int i = 0; i < 5; i++) {\n    printf(\"%d \", arr[i]);\n}</code></pre>"
+        },
+        {
+            "ContentType": "Video",
+            "ContentData": "https://www.youtube.com/embed/IRoOEsNqgzM"
+        }
+    ]
+}

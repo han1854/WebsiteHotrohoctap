@@ -6,11 +6,11 @@ namespace WebsiteHotrohoctap.Models
     {
         [Key]
         public int ContentID { get; set; }
-        [Required]
-        public string ContentType { get; set; } = "";
-        public string? ContentData { get; set; }
-        [Required]
         public int LessonID { get; set; }
-        public Lesson? Lesson { get; set; }
+        public string? ContentData { get; set; }
+        public string? ContentType { get; set; }
+
+        // Quan hệ với Lesson
+        public Lesson Lesson { get; set; }
     }
 }

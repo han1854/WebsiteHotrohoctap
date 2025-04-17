@@ -1,0 +1,22 @@
+{
+    "LessonName": "Đồ thị (Graph)",
+    "LessonDescription": "Đồ thị là một cấu trúc dữ liệu gồm tập đỉnh (vertices) và tập cạnh (edges), dùng để biểu diễn các mối quan hệ giữa các phần tử.",
+    "LessonContents": [
+        {
+            "ContentType": "Text",
+            "ContentData": "<p><strong>Đồ thị</strong> là cấu trúc dữ liệu phi tuyến tính, được biểu diễn bằng tập hợp các đỉnh (vertex) và các cạnh (edge). Đồ thị thường được sử dụng để mô tả các mối quan hệ giữa các đối tượng như mạng xã hội, mạng máy tính, đường đi trong bản đồ.</p><p><strong>Phân loại:</strong></p><ul><li><strong>Đồ thị có hướng:</strong> Các cạnh có hướng, biểu thị mối quan hệ một chiều (ví dụ: đồ thị biểu diễn mạng máy tính).</li><li><strong>Đồ thị vô hướng:</strong> Các cạnh không có hướng, biểu thị mối quan hệ hai chiều (ví dụ: mạng bạn bè).</li><li><strong>Đồ thị có trọng số:</strong> Các cạnh được gán giá trị (trọng số), biểu diễn chi phí hoặc độ dài (ví dụ: đường đi giữa các thành phố).</li></ul>"
+        },
+        {
+            "ContentType": "Text",
+            "ContentData": "<h3>Thuật toán cơ bản</h3><p><strong>Duyệt đồ thị:</strong></p><ul><li><strong>DFS (Depth First Search):</strong> Duyệt sâu vào các đỉnh con trước khi quay lại đỉnh cha.</li><li><strong>BFS (Breadth First Search):</strong> Duyệt theo chiều rộng, lần lượt thăm các đỉnh ở cùng cấp độ trước.</li></ul><p><strong>Ứng dụng:</strong></p><ul><li>Tìm đường đi ngắn nhất (Dijkstra, Floyd-Warshall).</li><li>Phát hiện chu trình.</li><li>Tìm cây bao trùm nhỏ nhất (Minimum Spanning Tree - Kruskal, Prim).</li></ul>"
+        },
+        {
+            "ContentType": "Text",
+            "ContentData": "<h3>Ví dụ</h3><pre><code>// Khởi tạo đồ thị vô hướng dùng danh sách kề\n#include <vector>\nusing namespace std;\n\nvector<int> graph[5]; // Tối đa 5 đỉnh\n\n// Thêm cạnh vào đồ thị\ngraph[0].push_back(1);\ngraph[1].push_back(0);\ngraph[1].push_back(2);\ngraph[2].push_back(1);\n\ngraph[3].push_back(4);\ngraph[4].push_back(3);\n\n// Duyệt DFS\nvoid dfs(int node, vector<bool>& visited) {\n    visited[node] = true;\n    printf(\"%d \", node);\n    for (int neighbor : graph[node]) {\n        if (!visited[neighbor]) {\n            dfs(neighbor, visited);\n        }\n    }\n}</code></pre>"
+        },
+        {
+            "ContentType": "Video",
+            "ContentData": "https://www.youtube.com/embed/LZmMovf7nto"
+        }
+    ]
+}

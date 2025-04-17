@@ -1,0 +1,22 @@
+{
+    "LessonName": "Stack & Queue",
+    "LessonDescription": "Stack và Queue là các cấu trúc dữ liệu cơ bản, sử dụng nguyên lý truy xuất phần tử khác nhau: LIFO cho Stack và FIFO cho Queue.",
+    "LessonContents": [
+        {
+            "ContentType": "Text",
+            "ContentData": "<p><strong>Khái niệm:</strong></p><ul><li><strong>Stack:</strong> Là cấu trúc dữ liệu hoạt động theo nguyên tắc LIFO (Last In, First Out): Phần tử được thêm vào cuối và cũng được lấy ra đầu tiên.</li><li><strong>Queue:</strong> Là cấu trúc dữ liệu hoạt động theo nguyên tắc FIFO (First In, First Out): Phần tử được thêm vào đầu tiên sẽ được lấy ra đầu tiên.</li></ul>"
+        },
+        {
+            "ContentType": "Text",
+            "ContentData": "<p><strong>Ứng dụng:</strong></p><ul><li><strong>Stack:</strong> Biểu thức toán học, duyệt cây (DFS), undo trong trình soạn thảo.</li><li><strong>Queue:</strong> Lập lịch tiến trình, tìm kiếm đồ thị (BFS), xử lý hàng đợi trong hệ thống.</li></ul>"
+        },
+        {
+            "ContentType": "Text",
+            "ContentData": "<h3>Ví dụ</h3><pre><code>// Sử dụng Stack trong C++\n#include <stack>\nstack<int> s;\ns.push(10);\ns.push(20);\nwhile (!s.empty()) {\n    printf(\"%d\\n\", s.top()); // In ra phần tử đầu tiên\n    s.pop();\n}\n\n// Sử dụng Queue trong C++\n#include <queue>\nqueue<int> q;\nq.push(10);\nq.push(20);\nwhile (!q.empty()) {\n    printf(\"%d\\n\", q.front()); // In ra phần tử đầu tiên\n    q.pop();\n}</code></pre>"
+        },
+        {
+            "ContentType": "Video",
+            "ContentData": "https://www.youtube.com/embed/jYLW3E4EMyg"
+        }
+    ]
+}

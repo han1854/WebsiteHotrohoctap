@@ -1,42 +1,37 @@
-﻿@model IEnumerable<WebsiteHotrohoctap.Models.LessonContent>
+@model WebsiteHotrohoctap.Models.Lesson
 
-@{
-    ViewData["Title"] = "Nội dung bài học";
-    var lesson = ViewBag.Lesson as WebsiteHotrohoctap.Models.Lesson;
-}
+<div class="lesson-container">
+    <h1>@Model.LessonName</h1>
+    <p><strong>Mô tả:</strong> @Model.LessonDescription</p>
 
-<h2 class="mb-4 text-center">@lesson?.LessonName</h2>
+    <!-- Hiển thị nội dung lý thuyết -->
+    <div class="theory-section">
+        @if (Model.LessonContents != null && Model.LessonContents.Any(c => c.ContentType == "Text"))
+        {
+            @foreach (var content in Model.LessonContents.Where(c => c.ContentType == "Text"))
+            {
+                @Html.Raw(content.ContentData)
+            }
+        }
+        else
+        {
+            <p>Không có nội dung lý thuyết.</p>
+        }
+    </div>
 
-<div class="container">
-    @foreach (var content in Model)
-    {
-        <div class="mb-4">
-            <div class="text-center">
-                @if (content.ContentType == "text")
-                {
-                    <p class="card-text text-start" style="white-space: pre-line;">@content.ContentData</p>
-                }
-                else if (content.ContentType == "image")
-                {
-                    <img src="@content.ContentData" class="img-fluid rounded" style="max-height: 400px; object-fit: contain;" alt="Ảnh bài học" />
-                }
-                else if (content.ContentType == "video")
-                {
-                    if (!string.IsNullOrWhiteSpace(content.ContentData) && content.ContentData.Contains("youtube"))
-                    {
-                        <div class="ratio ratio-16x9" style="max-width: 720px; margin: auto;">
-                            <iframe src="@content.ContentData" allowfullscreen style="border: none;"></iframe>
-                        </div>
-                    }
-                    else
-                    {
-                        <video controls class="rounded" style="width: 100%; max-width: 720px; max-height: 400px; object-fit: contain; margin: auto; display: block;">
-                            <source src="@content.ContentData" type="video/mp4" />
-                            Trình duyệt không hỗ trợ video.
-                        </video>
-                    }
-                }
-            </div>
-        </div>
-    }
+    <!-- Hiển thị video -->
+    <div class="video-section">
+        <h2>Video bài giảng</h2>
+        @if (Model.LessonContents != null && Model.LessonContents.Any(c => c.ContentType == "Video"))
+        {
+            @foreach (var content in Model.LessonContents.Where(c => c.ContentType == "Video"))
+            {
+                <iframe src="@content.ContentData" allowfullscreen></iframe>
+            }
+        }
+        else
+        {
+            <p>Không có video hướng dẫn.</p>
+        }
+    </div>
 </div>
