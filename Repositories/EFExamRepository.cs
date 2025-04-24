@@ -12,18 +12,21 @@ namespace WebsiteHotrohoctap.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Exam>> GetAllAsync()
+        public async Task<List<Exam>> GetAllAsync()
         {
-            return await _context.Exams.Include(p => p.Lesson).ToListAsync();
-
+            return await _context.Exams
+                .Include(e => e.Lesson)
+                .ToListAsync();
         }
 
         public async Task<Exam> GetByIdAsync(int id)
         {
-            return await _context.Exams.Include(p => p.Lesson).FirstOrDefaultAsync(p => p.ExamID == id);
+            return await _context.Exams
+                .Include(e => e.Lesson) // Include nếu cần liên kết với Lesson
+                .FirstOrDefaultAsync(e => e.ExamID == id);
         }
 
-        public async Task AddAsync(Exam exam)
+        public async Task AddExamAsync(Exam exam)
         {
             _context.Exams.Add(exam);
             await _context.SaveChangesAsync();

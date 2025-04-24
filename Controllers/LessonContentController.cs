@@ -135,42 +135,12 @@ namespace WebsiteHotrohoctap.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            // Kiểm tra lessonId hợp lệ
-            if (lessonId <= 0)
+            var lessoncontent = await _lessoncontentRepository.GetByIdAsync(id);
+            if (lessoncontent == null)
             {
-                return BadRequest("ID bài học không hợp lệ.");
+                return NotFound();
             }
-
-            // Đường dẫn tới tệp JSON trong thư mục wwwroot/json
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/json", $"lesson_{lessonId}.json");
-
-            if (!System.IO.File.Exists(filePath))
-            {
-                return NotFound($"Không tìm thấy bài học với ID {lessonId}.");
-            }
-
-            // Đọc nội dung JSON
-            string jsonData = System.IO.File.ReadAllText(filePath);
-
-            // Chuyển đổi JSON thành đối tượng Lesson
-            Lesson lesson = JsonConvert.DeserializeObject<Lesson>(jsonData);
-
-            if (lesson == null || lesson.LessonContents == null)
-            {
-                return NotFound("Dữ liệu bài học không hợp lệ.");
-            }
-
-            // Gán CourseID mặc định nếu JSON không có (để nút "Quay lại" hoạt động)
-            if (lesson.CourseID == 0)
-            {
-                lesson.CourseID = 1; // Giá trị mặc định, bạn có thể điều chỉnh
-            }
-
-            // Gán lesson vào ViewBag để sử dụng trong view
-            ViewBag.Lesson = lesson;
-
-            // Truyền danh sách LessonContents làm Model
-            return View("ByLesson", lesson.LessonContents);
+            return View(lessoncontent);
         }
         [Authorize(Roles = SD.Role_Admin)]
         [HttpPost]
@@ -245,4 +215,5 @@ namespace WebsiteHotrohoctap.Controllers
     return View(lesson);
 }
     }
+
 }

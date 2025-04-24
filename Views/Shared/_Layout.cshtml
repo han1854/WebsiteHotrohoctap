@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebsiteHotrohoctap.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false) @* Thêm section Styles, không bắt buộc *@
 </head>
 <body>
     <header>
@@ -27,7 +28,7 @@
                             <a class="nav-link text-light" asp-area="" asp-controller="Course" asp-action="Index">Khoá Học</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Practice" asp-action="Index">Luyện Tập</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Exercise" asp-action="Index">Luyện Tập</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-controller="Forum" asp-action="Index">Diễn Đàn</a>
@@ -52,6 +53,9 @@
                                     <li>
                                         <a class="dropdown-item" asp-area="" asp-controller="LessonContent" asp-action="Index">Quản lý nội dung bài học</a>
                                     </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="CreateExam">Quản lý bài tập</a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>
@@ -70,7 +74,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            © 2025 - WebsiteHotrohoctap - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            © 2025 - NoobCode - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
 

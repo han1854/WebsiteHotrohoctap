@@ -34,7 +34,7 @@ namespace WebsiteHotrohoctap.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _examRepository.AddAsync(exam);
+                await _examRepository.AddExamAsync(exam);
                 return RedirectToAction(nameof(Index));
             }
             var lessons = await _lessonRepository.GetAllAsync();

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebsiteHotrohoctap.Models;
+using WebsiteHotrohoctap.Models.ViewModels;
 
 namespace WebsiteHotrohoctap.Controllers
 {
@@ -46,5 +48,6 @@ namespace WebsiteHotrohoctap.Controllers
 
             return RedirectToAction("Index");
         }
+        
     }
 }
