@@ -1,0 +1,95 @@
+﻿.chat-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.chat-messages {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    height: 500px;
+    overflow-y: auto;
+    background-color: #f5f7fa;
+}
+
+.message {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.message-left {
+    justify-content: flex-start;
+}
+
+.message-right {
+    justify-content: flex-end;
+}
+
+.message-content {
+    max-width: 70%;
+}
+
+.message-left .message-content {
+    background-color: #e9ecef;
+    border-radius: 15px 15px 15px 0;
+    padding: 10px 15px;
+}
+
+.message-right .message-content {
+    background-color: #007bff;
+    color: white;
+    border-radius: 15px 15px 0 15px;
+    padding: 10px 15px;
+}
+
+.message-header {
+    display: flex;
+    align-items: center;
+    gap: 6px; /* Giảm khoảng cách từ 8px xuống 6px để phù hợp với avatar nhỏ hơn */
+    margin-bottom: 5px;
+}
+
+.message-avatar {
+    width: 20px; /* Giảm kích thước avatar từ 24px xuống 20px */
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.message-header strong {
+    font-size: 0.9em; /* Giảm kích thước font chữ từ 1em xuống 0.9em */
+}
+
+.message-header .text-muted {
+    font-size: 0.75em; /* Giảm kích thước font thời gian từ 0.8em xuống 0.75em */
+    color: #888;
+    margin-left: 5px;
+}
+
+.message-body {
+    margin-top: 5px;
+    word-wrap: break-word;
+}
+
+.chat-input {
+    margin-top: 20px;
+}
+
+    .chat-input .form-group {
+        display: flex;
+        align-items: center;
+    }
+
+    .chat-input input {
+        flex: 1;
+        margin-right: 10px;
+        border-radius: 20px;
+        padding: 10px 15px;
+    }
+
+    .chat-input .btn {
+        border-radius: 20px;
+        padding: 10px 20px;
+    }

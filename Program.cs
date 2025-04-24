@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using WebsiteHotrohoctap.Hubs;
 using WebsiteHotrohoctap.Models;
 using WebsiteHotrohoctap.Repositories;
 
@@ -9,16 +10,25 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
+builder.Services.AddSignalR();
+
 builder.Services.AddScoped<ICourseRepository, EFCourseRepository>();
 builder.Services.AddScoped<ILessonRepository, EFLessonRepository>();
 builder.Services.AddScoped<ILessonContentRepository, EFLessonContentRepository>();
 builder.Services.AddScoped<IExamRepository, EFExamRepository>();
 builder.Services.AddScoped<IExamContentRepository, EFExamContentRepository>();
 builder.Services.AddScoped<IExamResultRepository, EFExamResultRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+//
+builder.Services.AddHttpClient("IdeoneClient", client =>
+{
+    client.BaseAddress = new Uri("https://ideone.com/api/");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
 
 builder.Services.AddIdentity<User, IdentityRole>()
         .AddDefaultTokenProviders()
@@ -85,6 +95,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+app.MapHub<ChatHub>("/chatHub");
 
 app.MapControllerRoute(
     name: "default",

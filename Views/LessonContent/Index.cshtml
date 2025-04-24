@@ -7,7 +7,8 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+	
+    <a asp-action="Create" class="btn btn-primary rounded-pill">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -21,27 +22,24 @@
             <th>
                 @Html.DisplayNameFor(model => model.Lesson)
             </th>
-            <th></th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ContentType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ContentData)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Lesson.LessonName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ContentID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ContentID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ContentID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr class="align-middle text-center">
+                <td>@item.ContentType</td>
+                <td>@item.ContentData</td>
+                <td>@item.Lesson?.LessonName</td>
+                <td>
+                    <div class="d-flex justify-content-center gap-2 flex-wrap">
+                        <a asp-action="Update" asp-route-id="@item.LessonID" class="btn btn-sm btn-outline-warning rounded-pill">Sửa</a>
+                        <a asp-action="Details" asp-route-id="@item.LessonID" class="btn btn-sm btn-outline-info rounded-pill">Chi tiết</a>
+                        <a asp-action="Delete" asp-route-id="@item.LessonID" class="btn btn-sm btn-outline-danger rounded-pill">Xóa</a>
+                    </div>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

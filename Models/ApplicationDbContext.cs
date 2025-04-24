@@ -13,6 +13,7 @@ namespace WebsiteHotrohoctap.Models
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<ExamContent> ExamContents { get; set; }
         public DbSet<ExamResult> ExamResults { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
     }
 }

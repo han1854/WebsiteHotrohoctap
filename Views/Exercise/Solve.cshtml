@@ -1,0 +1,146 @@
+﻿@model WebsiteHotrohoctap.Models.ViewModels.ExamViewModel
+
+@{
+    ViewData["Title"] = "Giải bài tập";
+}
+
+<h1>@Model.ExamName</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>Mô tả bài tập</h3>
+        <p>@Model.ProblemDescription</p>
+        <h4>Input mẫu</h4>
+        <pre>@Model.SampleInput</pre>
+        <h4>Output mẫu</h4>
+        <pre>@Model.SampleOutput</pre>
+    </div>
+    <div class="col-md-6">
+        <h3>Soạn thảo mã</h3>
+        <div class="language-selector mb-3">
+            <label for="language">Ngôn ngữ:</label>
+            <select id="language" name="language" class="form-control">
+                <option value="11">C (gcc)</option>
+                <option value="1">C++ (g++)</option>
+                <option value="116">Python 3</option>
+                <option value="10">Java</option>
+            </select>
+        </div>
+        <div id="editor" style="height: 400px;"></div>
+        <div class="mt-3">
+            <h4>Input</h4>
+            <textarea id="inputText" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="mt-3">
+            <button id="runCode" class="btn btn-primary">Run</button>
+            <button id="submitCode" class="btn btn-success">Submit</button>
+        </div>
+        <div class="mt-3">
+            <h4>Output</h4>
+            <pre id="outputText"></pre>
+        </div>
+        <div id="testResult" class="mt-3"></div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        #editor {
+            border: 1px solid #ccc;
+        }
+
+        .error-details {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #dc3545;
+            border-radius: 5px;
+            background-color: #f8d7da;
+            color: #dc3545;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    <script>
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/monokai");
+        editor.session.setMode("ace/mode/c_cpp");
+
+        const language = document.getElementById("language");
+        language.addEventListener("change", () => {
+            let aceMode = "ace/mode/c_cpp";
+            if (language.value === "116") aceMode = "ace/mode/python";
+            else if (language.value === "10") aceMode = "ace/mode/java";
+            editor.session.setMode(aceMode);
+        });
+
+        document.getElementById("runCode").addEventListener("click", async () => {
+            const code = editor.getValue();
+            const input = document.getElementById("inputText").value;
+            const examId = @Model.ExamID;
+            const language = document.getElementById("language").value;
+
+            try {
+                const response = await fetch('/Exercise/RunCode', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ examId, code, input, language })
+                });
+
+                const result = await response.json();
+                const outputText = document.getElementById("outputText");
+
+                if (result.success) {
+                    outputText.textContent = result.output || "Không có output";
+                } else {
+                    outputText.textContent = result.error || "Lỗi không xác định";
+                }
+            } catch (error) {
+                document.getElementById("outputText").textContent = "Lỗi khi chạy mã: " + error.message;
+            }
+        });
+
+        document.getElementById("submitCode").addEventListener("click", async () => {
+            const code = editor.getValue();
+            const examId = @Model.ExamID;
+            const language = document.getElementById("language").value;
+
+            try {
+                const response = await fetch('/Exercise/SubmitCode', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ examId, code, language })
+                });
+
+                const result = await response.json();
+                const outputText = document.getElementById("outputText");
+                const testResult = document.getElementById("testResult");
+
+                if (result.success) {
+                    outputText.textContent = result.output || "Không có output";
+                    if (result.passed) {
+                        testResult.innerHTML = '<span class="text-success">Test Case Passed!</span>';
+                    } else {
+                        testResult.innerHTML = '<span class="text-danger">Test Case Failed!</span>' +
+                            '<div class="error-details">' +
+                            '<strong>Lý do:</strong> ' + (result.errorMessage || 'Không xác định') + '<br>' +
+                            '<strong>Đầu ra mong đợi:</strong><pre>' + result.expectedOutput + '</pre>' +
+                            '<strong>Đầu ra thực tế:</strong><pre>' + result.output + '</pre>' +
+                            '</div>';
+                    }
+                } else {
+                    outputText.textContent = result.error || "Lỗi không xác định";
+                    testResult.textContent = '';
+                }
+            } catch (error) {
+                document.getElementById("outputText").textContent = "Lỗi khi chạy mã: " + error.message;
+                document.getElementById("testResult").textContent = '';
+            }
+        });
+    </script>
+}

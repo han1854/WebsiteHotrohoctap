@@ -1,0 +1,108 @@
+﻿@model IEnumerable<WebsiteHotrohoctap.Models.Message>
+
+@{
+    ViewData["Title"] = "Diễn Đàn";
+}
+
+<h1>Diễn Đàn</h1>
+
+<div class="chat-container">
+    <div class="chat-messages" id="chatMessages">
+        @foreach (var message in Model)
+        {
+            var isCurrentUser = User.Identity.Name == message.User.UserName;
+            <div class="message @(isCurrentUser ? "message-right" : "message-left")">
+                <div class="message-content">
+                    <div class="message-header">
+                        
+                        <div>
+                            <strong>@message.User.UserName</strong>
+                            <span class="text-muted">@message.Timestamp.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                    </div>
+                    <div class="message-body">
+                        @message.Content
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="chat-input">
+            <form id="chatForm">
+                <div class="form-group d-flex">
+                    <input type="text" id="messageInput" class="form-control me-2" placeholder="Nhập tin nhắn..." />
+                    <button type="submit" class="btn btn-primary">Gửi</button>
+                </div>
+            </form>
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">Vui lòng <a asp-area="Identity" asp-page="/Account/Login">đăng nhập</a> để tham gia thảo luận.</p>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    <script>
+        // Kết nối đến SignalR Hub
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub")
+            .build();
+
+        // Nhận tin nhắn từ server
+        connection.on("ReceiveMessage", (user, message) => {
+            const isCurrentUser = user === "@User.Identity.Name";
+            const msgDiv = document.createElement("div");
+            msgDiv.classList.add("message", isCurrentUser ? "message-right" : "message-left");
+            msgDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="message-header">
+                        
+                        <div>
+                            <strong>${user}</strong>
+                            <span class="text-muted">(${new Date().toLocaleString("vi-VN")})</span>
+                        </div>
+                    </div>
+                    <div class="message-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            document.getElementById("chatMessages").appendChild(msgDiv);
+
+            // Cuộn xuống tin nhắn mới nhất
+            const chatMessages = document.getElementById("chatMessages");
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+
+        // Bắt đầu kết nối
+        connection.start().catch(err => console.error(err.toString()));
+
+        // Gửi tin nhắn
+        document.getElementById("chatForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const message = document.getElementById("messageInput").value;
+
+            if (message.trim() === "") return;
+
+            // Gửi tin nhắn qua SignalR
+            await connection.invoke("SendMessage", "@User.Identity.Name", message);
+
+            // Gửi tin nhắn lên server để lưu vào cơ sở dữ liệu
+            await fetch('/Forum/SendMessage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `content=${encodeURIComponent(message)}`
+            });
+
+            // Xóa nội dung input sau khi gửi
+            document.getElementById("messageInput").value = "";
+        });
+    </script>
+}

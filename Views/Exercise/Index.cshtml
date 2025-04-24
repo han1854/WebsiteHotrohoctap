@@ -1,0 +1,41 @@
+﻿@model IEnumerable<WebsiteHotrohoctap.Models.Exam>
+
+@{
+    ViewData["Title"] = "Luyện Tập";
+}
+
+<h1>Luyện Tập</h1>
+
+<div class="row">
+    @foreach (var exam in Model)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@exam.ExamName</h5>
+                    <p class="card-text">
+                        @{
+                            var description = exam.Description;
+                            try
+                            {
+                                var json = System.Text.Json.JsonSerializer.Deserialize<WebsiteHotrohoctap.Models.ExamDescription>(exam.Description);
+                                description = json.ProblemDescription;
+                            }
+                            catch
+                            {
+                                // Nếu không phải JSON, hiển thị Description trực tiếp
+                            }
+                        }
+                        @description
+                    </p>
+                    <a asp-action="Solve" asp-route-id="@exam.ExamID" class="btn btn-primary">Làm bài</a>
+                    @if (User.IsInRole("Admin"))
+                    {
+						//Thêm nút chỉnh sửa bài tập nếu là admin
+						<a asp-action="EditExam" asp-route-id="@exam.ExamID" class="btn btn-secondary">Chỉnh sửa</a>
+					}
+                </div>
+            </div>
+        </div>
+    }
+</div>

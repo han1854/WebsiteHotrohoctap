@@ -13,8 +13,9 @@ namespace WebsiteHotrohoctap.Repositories
 
         public async Task<IEnumerable<Lesson>> GetAllAsync()
         {
-            return await _context.Lessons.Include(p => p.Course).ToListAsync();
-
+            return await _context.Lessons
+                .Include(l => l.Course) // Tải dữ liệu liên quan của Course
+                .ToListAsync();
         }
 
         public async Task<Lesson> GetByIdAsync(int id)
@@ -37,8 +38,11 @@ namespace WebsiteHotrohoctap.Repositories
         public async Task DeleteAsync(int id)
         {
             var lesson = await _context.Lessons.FindAsync(id);
-            _context.Lessons.Remove(lesson);
-            await _context.SaveChangesAsync();
+            if (lesson != null)
+            {
+                _context.Lessons.Remove(lesson);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<List<Lesson>> GetLessonsByCourseIdAsync(int courseId)

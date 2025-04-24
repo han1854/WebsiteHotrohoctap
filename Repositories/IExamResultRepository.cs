@@ -9,5 +9,6 @@ namespace WebsiteHotrohoctap.Repositories
         Task AddAsync(ExamResult examResult);
         Task UpdateAsync(ExamResult examResult);
         Task DeleteAsync(int id);
+       
     }
 }

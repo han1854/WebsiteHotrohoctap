@@ -1,0 +1,52 @@
+﻿@model WebsiteHotrohoctap.Models.ViewModels.ExamViewModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa bài tập";
+    var lessons = ViewBag.Lessons as List<WebsiteHotrohoctap.Models.Lesson>;
+}
+
+<h1>Chỉnh sửa bài tập</h1>
+
+<form asp-action="EditExam" method="post">
+    <input type="hidden" asp-for="ExamID" />
+    <div class="form-group">
+        <label asp-for="ExamName" class="control-label"></label>
+        <input asp-for="ExamName" class="form-control" />
+        <span asp-validation-for="ExamName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ProblemDescription" class="control-label"></label>
+        <textarea asp-for="ProblemDescription" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="ProblemDescription" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="SampleInput" class="control-label"></label>
+        <textarea asp-for="SampleInput" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="SampleInput" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="SampleOutput" class="control-label"></label>
+        <textarea asp-for="SampleOutput" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="SampleOutput" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="TotalMarks" class="control-label"></label>
+        <input asp-for="TotalMarks" class="form-control" />
+        <span asp-validation-for="TotalMarks" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="LessonID" class="control-label"></label>
+        <select asp-for="LessonID" class="form-control" asp-items="@(new SelectList(lessons, "LessonID", "LessonName"))">
+            <option value="">-- Chọn bài học --</option>
+        </select>
+        <span asp-validation-for="LessonID" class="text-danger"></span>
+    </div>
+    <div class="form-group mt-3">
+        <input type="submit" value="Lưu" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

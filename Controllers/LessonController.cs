@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 using WebsiteHotrohoctap.Models;
 using WebsiteHotrohoctap.Repositories;
-using Newtonsoft.Json;
-using System.IO;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebsiteHotrohoctap.Controllers
 {
@@ -122,19 +121,29 @@ namespace WebsiteHotrohoctap.Controllers
             }
             return View(lesson);
         }
+
         [Authorize(Roles = SD.Role_Admin)]
         [HttpPost, ActionName("DeleteConfirmed")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _lessonRepository.DeleteAsync(id);
-            return RedirectToAction(nameof(Index));
-        }
-        public async Task<IActionResult> ByCourse(int courseId)
-        {
-            var lessons = await _lessonRepository.GetLessonsByCourseIdAsync(courseId);
-            ViewBag.Course = await _courseRepository.GetByIdAsync(courseId);
-            return View(lessons);
-        }
+            try
+            {
+                var lesson = await _lessonRepository.GetByIdAsync(id);
+                if (lesson == null)
+                {
+                    return NotFound();
+                }
+                await _lessonRepository.DeleteAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting lesson: {ex.Message}");
+                TempData["Error"] = "Có lỗi xảy ra khi xóa bài học. Vui lòng thử lại.";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+        
+    }
 
     }
 }
