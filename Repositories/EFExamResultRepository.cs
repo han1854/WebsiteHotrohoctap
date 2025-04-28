@@ -14,14 +14,20 @@ namespace WebsiteHotrohoctap.Repositories
 
         public async Task<IEnumerable<ExamResult>> GetAllAsync()
         {
-            return await _context.ExamResults.Include(p => p.Exam).ToListAsync();
-
+            return await _context.ExamResults
+                                 .Include(p => p.Exam)
+                                 .Include(p => p.User)
+                                 .ToListAsync();
         }
 
         public async Task<ExamResult> GetByIdAsync(int id)
         {
-            return await _context.ExamResults.Include(p => p.Exam).FirstOrDefaultAsync(p => p.ResultID == id);
+            return await _context.ExamResults
+                                 .Include(p => p.Exam)
+                                 .Include(p => p.User)
+                                 .FirstOrDefaultAsync(p => p.ResultID == id);
         }
+
 
         public async Task AddAsync(ExamResult examresult)
         {

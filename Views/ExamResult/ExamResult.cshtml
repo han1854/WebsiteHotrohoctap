@@ -1,0 +1,28 @@
+﻿@model WebsiteHotrohoctap.Models.ExamResult
+
+@{
+    ViewData["Title"] = "Kết quả bài thi";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center">Kết quả bài thi</h2>
+    <p><strong>Bài thi:</strong> @Model.Exam.ExamName</p>
+    <p><strong>Điểm:</strong> @Model.Score / 100</p>
+    <p><strong>Trạng thái:</strong> @Model.Status</p>
+
+    <h4>Đáp án của bạn</h4>
+    <ul>
+        @foreach (var answer in Model.Answer.Split(';'))
+        {
+            <li>@answer</li>
+        }
+    </ul>
+
+    @if (!string.IsNullOrEmpty(Model.Code))
+    {
+        <h4>Mã bạn đã nộp</h4>
+        <pre>@Model.Code</pre>
+    }
+
+    <a href="@Url.Action("DoExam", "Exam", new { id = Model.ExamID })" class="btn btn-secondary">Làm lại bài thi</a>
+</div>

@@ -1,53 +1,44 @@
 ﻿@model IEnumerable<WebsiteHotrohoctap.Models.Exam>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Danh sách bài kiểm tra";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-gradient">Danh sách bài kiểm tra</h3>
+        <a asp-action="Create" class="btn btn-outline-primary rounded-pill shadow-sm">➕ Thêm bài kiểm tra</a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ExamName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TotalMarks)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Lesson)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ExamName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalMarks)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Lesson.LessonName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ExamID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ExamID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ExamID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered shadow-sm rounded bg-white">
+            <thead class="thead-dark">
+                <tr class="text-center">
+                    <th>Tên bài kiểm tra</th>
+                    <th>Mô tả</th>
+                    <th>Tổng điểm</th>
+                    <th>Thuộc bài học</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="align-middle text-center">
+                        <td>@item.ExamName</td>
+                        <td class="text-start">@item.Description</td>
+                        <td>@item.TotalMarks</td>
+                        <td>@item.Lesson?.LessonName</td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                <a asp-action="Update" asp-route-id="@item.ExamID" class="btn btn-sm btn-outline-warning rounded-pill">Sửa</a>
+                                <a asp-controller="ExamContent" asp-action="Index" asp-route-id="@item.ExamID" class="btn btn-sm btn-outline-info rounded-pill">Câu hỏi</a>
+                                <a asp-action="Delete" asp-route-id="@item.ExamID" class="btn btn-sm btn-outline-danger rounded-pill" onclick="return confirm('Bạn có chắc chắn muốn xóa bài kiểm tra này không?');">Xóa</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

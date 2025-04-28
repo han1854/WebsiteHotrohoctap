@@ -35,6 +35,11 @@ namespace WebsiteHotrohoctap.Repositories
         public async Task DeleteAsync(int id)
         {
             var examcontent = await _context.ExamContents.FindAsync(id);
+            if (examcontent == null)
+            {
+                throw new ArgumentNullException(nameof(examcontent), "Không tìm thấy bản ghi cần xóa.");
+            }
+
             _context.ExamContents.Remove(examcontent);
             await _context.SaveChangesAsync();
         }

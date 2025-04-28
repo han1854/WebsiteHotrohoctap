@@ -29,6 +29,7 @@
                         @description
                     </p>
                     <a asp-action="Solve" asp-route-id="@exam.ExamID" class="btn btn-primary">Làm bài</a>
+                    <a asp-controller="ExamResult" asp-action="DoExam" asp-route-id="@exam.ExamID" class="btn btn-primary">Làm bài thi</a>
                     @if (User.IsInRole("Admin"))
                     {
 						//Thêm nút chỉnh sửa bài tập nếu là admin

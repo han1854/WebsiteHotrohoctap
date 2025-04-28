@@ -1,44 +1,26 @@
 ﻿@model WebsiteHotrohoctap.Models.ExamResult
 
 @{
-    ViewData["Title"] = "Update";
+    ViewData["Title"] = "Chỉnh sửa kết quả thi";
 }
 
-<h1>Update</h1>
+<div class="container mt-4">
+    <h2 class="text-center">Chỉnh sửa kết quả bài thi</h2>
 
-<h4>ExamResult</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Update">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ResultID" />
-            <div class="form-group">
-                <label asp-for="Score" class="control-label"></label>
-                <input asp-for="Score" class="form-control" />
-                <span asp-validation-for="Score" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ExamDate" class="control-label"></label>
-                <input asp-for="ExamDate" class="form-control" />
-                <span asp-validation-for="ExamDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ExamID" class="control-label"></label>
-                <select asp-for="ExamID" class="form-control" asp-items="ViewBag.ExamID"></select>
-                <span asp-validation-for="ExamID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+    <form method="post" asp-action="Update" asp-route-id="@Model.ResultID">
+        <div class="form-group">
+            <label for="score">Điểm</label>
+            <input type="number" class="form-control" id="score" name="Score" value="@Model.Score" required />
+        </div>
+
+        <div class="form-group">
+            <label for="status">Trạng thái</label>
+            <select class="form-control" id="status" name="Status" required>
+                <option value="Completed" selected="@((Model.Status == "Completed") ? "selected" : "")">Hoàn thành</option>
+                <option value="InProgress" selected="@((Model.Status == "InProgress") ? "selected" : "")">Đang làm</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Cập nhật</button>
+    </form>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

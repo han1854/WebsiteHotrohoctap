@@ -111,6 +111,7 @@ namespace WebsiteHotrohoctap.Controllers
             return View(lesson);
         }
 
+
         [Authorize(Roles = SD.Role_Admin)]
         public async Task<IActionResult> Delete(int id)
         {
@@ -142,8 +143,12 @@ namespace WebsiteHotrohoctap.Controllers
                 TempData["Error"] = "Có lỗi xảy ra khi xóa bài học. Vui lòng thử lại.";
                 return RedirectToAction(nameof(Delete), new { id });
             }
-        
-    }
-
+        }
+        public async Task<IActionResult> ByCourse(int courseId)
+        {
+            var lessons = await _lessonRepository.GetLessonsByCourseIdAsync(courseId);
+            ViewBag.Course = await _courseRepository.GetByIdAsync(courseId);
+            return View(lessons);
+        }
     }
 }

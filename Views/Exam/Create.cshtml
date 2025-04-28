@@ -1,47 +1,60 @@
 ﻿@model WebsiteHotrohoctap.Models.Exam
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Thêm bài kiểm tra";
 }
 
-<h1>Create</h1>
+<h2 class="text-center">Thêm bài kiểm tra</h2>
 
-<h4>Exam</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="ExamName" class="control-label"></label>
-                <input asp-for="ExamName" class="form-control" />
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- Tên bài kiểm tra -->
+            <div class="form-group mb-3">
+                <label asp-for="ExamName" class="control-label">Tên bài kiểm tra</label>
+                <input asp-for="ExamName" class="form-control" placeholder="Nhập tên bài kiểm tra" />
                 <span asp-validation-for="ExamName" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+
+            <!-- Mô tả bài kiểm tra -->
+            <div class="form-group mb-3">
+                <label asp-for="Description" class="control-label">Mô tả</label>
+                <textarea asp-for="Description" class="form-control" placeholder="Nhập mô tả bài kiểm tra" rows="5"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="TotalMarks" class="control-label"></label>
-                <input asp-for="TotalMarks" class="form-control" />
+
+            <!-- Tổng điểm -->
+            <div class="form-group mb-3">
+                <label asp-for="TotalMarks" class="control-label">Tổng điểm</label>
+                <input asp-for="TotalMarks" class="form-control" placeholder="Nhập tổng điểm" />
                 <span asp-validation-for="TotalMarks" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="LessonID" class="control-label"></label>
-                <select asp-for="LessonID" class ="form-control" asp-items="ViewBag.LessonID"></select>
+
+            <!-- Chọn bài học -->
+            <div class="form-group mb-3">
+                <label asp-for="LessonID" class="control-label">Thuộc bài học</label>
+                <select asp-for="LessonID" class="form-select" asp-items="ViewBag.Lessons">
+                    <option value="">-- Chọn bài học --</option>
+                </select>
+                <span asp-validation-for="LessonID" class="text-danger"></span>
             </div>
+
+            <!-- Nút submit -->
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <button type="submit" class="btn btn-primary w-100 btn-lg rounded-pill shadow-sm">Tạo bài kiểm tra</button>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="text-center mt-3">
+    <a asp-action="Index" class="btn btn-link">Quay lại danh sách bài kiểm tra</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

@@ -1,42 +1,96 @@
 ﻿@model WebsiteHotrohoctap.Models.ExamContent
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết câu hỏi";
 }
 
-<h1>Details</h1>
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">📋 Chi tiết câu hỏi</h2>
 
-<div>
-    <h4>ExamContent</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.QuestionType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.QuestionType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.QuestionText)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.QuestionText)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CorrectAnswer)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CorrectAnswer)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Exam)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Exam.ExamID)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.ExamContentID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="card shadow-sm rounded p-4">
+        <dl class="row">
+            <!-- Loại câu hỏi -->
+            <dt class="col-sm-3">Loại câu hỏi</dt>
+            <dd class="col-sm-9">
+                @(Model.QuestionType == "MultipleChoice" ? "Trắc nghiệm" : "Viết mã lệnh")
+            </dd>
+
+            <!-- Nội dung câu hỏi -->
+            <dt class="col-sm-3">Nội dung câu hỏi</dt>
+            <dd class="col-sm-9">@Model.QuestionText</dd>
+
+            @if (Model.QuestionType == "MultipleChoice")
+            {
+                <!-- Các lựa chọn và đáp án đúng -->
+                <dt class="col-sm-3">Các lựa chọn</dt>
+                <dd class="col-sm-9">
+                    <ul class="list-group list-group-flush">
+                        @for (int i = 0; i < (Model.Options?.Count ?? 0); i++)
+                        {
+                            var isCorrect = Model.Options[i] == Model.SelectedAnswer;
+                            <li class="list-group-item @(isCorrect ? "list-group-item-success" : "")">
+                                <strong>@(i + 1).</strong> @Model.Options[i]
+                                @if (isCorrect)
+                                {
+                                    <span class="badge bg-success ms-2">Đáp án đúng</span>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </dd>
+            }
+            else if (Model.QuestionType == "Code")
+            {
+                <!-- Ngôn ngữ lập trình -->
+                <dt class="col-sm-3">Ngôn ngữ lập trình</dt>
+                <dd class="col-sm-9">@Model.Language</dd>
+
+                <!-- Starter Code -->
+                @if (!string.IsNullOrWhiteSpace(Model.StarterCode))
+                {
+                    <dt class="col-sm-3">Starter Code</dt>
+                    <dd class="col-sm-9">
+                        <pre class="bg-light p-3 rounded">@Model.StarterCode</pre>
+                    </dd>
+                }
+
+                <!-- Input mẫu -->
+                @if (!string.IsNullOrWhiteSpace(Model.SampleInput))
+                {
+                    <dt class="col-sm-3">Input mẫu</dt>
+                    <dd class="col-sm-9">
+                        <pre class="bg-light p-3 rounded">@Model.SampleInput</pre>
+                    </dd>
+                }
+
+                <!-- Output mong đợi -->
+                @if (!string.IsNullOrWhiteSpace(Model.ExpectedOutput))
+                {
+                    <dt class="col-sm-3">Output mong đợi</dt>
+                    <dd class="col-sm-9">
+                        <pre class="bg-light p-3 rounded">@Model.ExpectedOutput</pre>
+                    </dd>
+                }
+
+                <!-- Đáp án mẫu -->
+                @if (!string.IsNullOrWhiteSpace(Model.CorrectAnswer))
+                {
+                    <dt class="col-sm-3">Đáp án mẫu</dt>
+                    <dd class="col-sm-9">
+                        <pre class="bg-light p-3 rounded">@Model.CorrectAnswer</pre>
+                    </dd>
+                }
+            }
+
+            <!-- Thuộc bài kiểm tra -->
+            <dt class="col-sm-3">Thuộc bài kiểm tra</dt>
+            <dd class="col-sm-9">@Model.Exam?.ExamName</dd>
+        </dl>
+    </div>
+
+    <!-- Nút thao tác -->
+    <div class="mt-4 text-center">
+        <a asp-action="Update" asp-route-id="@Model.ExamContentID" class="btn btn-warning rounded-pill me-2">✏️ Sửa</a>
+        <a asp-action="Index" class="btn btn-secondary rounded-pill">⬅️ Quay lại danh sách</a>
+    </div>
 </div>

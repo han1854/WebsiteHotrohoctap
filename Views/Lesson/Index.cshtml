@@ -14,10 +14,10 @@
         <table class="table table-hover table-bordered shadow-sm rounded bg-white">
             <thead class="thead-dark">
                 <tr class="text-center">
-                    <th>@Html.DisplayNameFor(model => model.First().LessonName)</th>
-                    <th>@Html.DisplayNameFor(model => model.First().LessonDescription)</th>
-                    <th>Course</th>
-                    <th>Action</th>
+                    <th>Tên bài học</th>
+                    <th>Mô tả</th>
+                    <th>Thuộc khóa học</th>
+                    <th>Thao tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,7 +30,7 @@
                         <td>
                             <div class="d-flex justify-content-center gap-2 flex-wrap">
                                 <a asp-action="Update" asp-route-id="@item.LessonID" class="btn btn-sm btn-outline-warning rounded-pill">Sửa</a>
-                                <a asp-action="Details" asp-route-id="@item.LessonID" class="btn btn-sm btn-outline-info rounded-pill">Chi tiết</a>
+                                <!--<a asp-action="Details" asp-route-id="@item.LessonID" class="btn btn-sm btn-outline-info rounded-pill">Chi tiết</a>-->
                                 <a asp-action="Delete" asp-route-id="@item.LessonID" class="btn btn-sm btn-outline-danger rounded-pill">Xóa</a>
                             </div>
                         </td>

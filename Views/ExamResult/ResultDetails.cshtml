@@ -1,0 +1,90 @@
+﻿@model WebsiteHotrohoctap.Models.ExamResult
+
+@{
+    ViewData["Title"] = "Kết quả bài thi";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">🎯 Kết quả bài thi</h2>
+        <h4 class="text-muted">@Model.Exam?.ExamName</h4>
+        <p class="mt-3 fs-5"><strong>Điểm số:</strong> @Model.Score</p>
+        <p class="fs-5"><strong>Trạng thái:</strong> @Model.Status</p>
+    </div>
+
+    @if (Model.Exam?.ExamContents != null && Model.Exam.ExamContents.Any())
+    {
+        <div class="d-flex flex-column gap-4">
+            @for (int i = 0; i < Model.Exam.ExamContents.Count; i++)
+            {
+                var question = Model.Exam.ExamContents[i];
+                var userAnswer = Model.Answer?.Split(';').ElementAtOrDefault(i);
+                var correctAnswer = question.SelectedAnswer;
+                string result = string.Empty;
+                bool isCorrect = false;
+
+                // Xử lý kết quả
+                if (question.QuestionType == "MultipleChoice")
+                {
+                    isCorrect = userAnswer == correctAnswer;
+                }
+                else if (question.QuestionType == "Code")
+                {
+                    var userOutput = Model.Output?.Split(';').ElementAtOrDefault(i);
+                    var expectedOutput = question.ExpectedOutput;
+                    isCorrect = userOutput == expectedOutput;
+                }
+
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="fw-semibold mb-3">Câu hỏi @((i + 1)): @question.QuestionText</h5>
+
+                        @if (isCorrect)
+                        {
+                            <p class="mb-0">
+                                <span class="badge bg-success">Đúng</span>
+                            </p>
+                            <p class="mt-2">
+                                <strong>Đáp án:</strong>
+                                <span class="text-success fw-bold">@correctAnswer</span>
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="mb-0">
+                                <span class="badge bg-danger">Sai</span>
+                            </p>
+                            <p class="mt-2">
+                                <strong>Đáp án của bạn:</strong>
+                                <span class="text-danger fw-bold">@userAnswer</span>
+                            </p>
+                            <p>
+                                <strong>Đáp án đúng:</strong>
+                                <span class="text-success fw-bold">@correctAnswer</span>
+                            </p>
+                        }
+
+                        <div class="mt-2 text-muted">
+                            <small><i>Loại câu hỏi: @(question.QuestionType == "MultipleChoice" ? "Trắc nghiệm" : "Viết mã")</i></small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-center text-muted">Không có câu hỏi nào trong bài thi này.</p>
+    }
+
+    <div class="text-center mt-5">
+        <a asp-controller="Exercise" asp-action="Index" class="btn btn-secondary rounded-pill px-4">⬅️ Quay lại danh sách</a>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

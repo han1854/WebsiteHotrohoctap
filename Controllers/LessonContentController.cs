@@ -176,44 +176,63 @@ namespace WebsiteHotrohoctap.Controllers
             return View(lessoncontent);
         }
         [Authorize(Roles = SD.Role_Admin)]
-        [HttpPost, ActionName("DeleteConfirmed")]
+        [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var lessoncontent = await _lessoncontentRepository.GetByIdAsync(id);
+            if (lessoncontent == null)
+            {
+                return NotFound();
+            }
+
             await _lessoncontentRepository.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult ByLesson(int lessonId)
-{
-    // Kiểm tra lessonId hợp lệ
-    if (lessonId <= 0)
-    {
-        return BadRequest("ID bài học không hợp lệ.");
-    }
+        public async Task<IActionResult> ByLesson(int lessonId)
+        {
+            // Kiểm tra lessonId hợp lệ
+            if (lessonId <= 0)
+            {
+                return BadRequest("ID bài học không hợp lệ.");
+            }
 
-    // Đường dẫn tới tệp JSON trong thư mục wwwroot/json
-    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/json", $"lesson_{lessonId}.json");
+            var lesson = await _lessonRepository.GetByIdAsync(lessonId);
+            if (lesson == null)
+            {
+                return NotFound();
+            }
 
-    if (!System.IO.File.Exists(filePath))
-    {
-        return NotFound($"Không tìm thấy bài học với ID {lessonId}.");
-    }
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/json", $"lesson_{lessonId}.json");
 
-    // Đọc nội dung JSON
-    string jsonData = System.IO.File.ReadAllText(filePath);
+            // Kiểm tra nếu file JSON tồn tại
+            if (System.IO.File.Exists(filePath))
+            {
+                string jsonData = System.IO.File.ReadAllText(filePath);
+                Lesson lessonjs = JsonConvert.DeserializeObject<Lesson>(jsonData);
 
-    // Chuyển đổi JSON thành đối tượng Lesson
-    Lesson lesson = JsonConvert.DeserializeObject<Lesson>(jsonData);
+                if (lessonjs == null)
+                {
+                    return NotFound($"Không có nội dung bài học với ID {lessonId}.");
+                }
 
-    // Kiểm tra lesson có tồn tại
-    if (lesson == null)
-    {
-        return NotFound($"Không có nội dung bài học với ID {lessonId}.");
-    }
+                // Trả về đối tượng lessonjs nếu file JSON tồn tại
+                return View(lessonjs);
+            }
+            else
+            {
+                // Nếu không có file JSON, lấy tất cả nội dung bài học từ cơ sở dữ liệu
+                var lessonContents = await _lessoncontentRepository.GetByLessonIdAsync(lessonId);
 
-    // Truyền toàn bộ đối tượng Lesson vào View
-    return View(lesson);
-}
+                // Gán danh sách nội dung bài học vào đối tượng lesson
+                lesson.LessonContents = lessonContents;
+
+                // Truyền đối tượng Lesson vào View (bao gồm cả thông tin bài học và nội dung)
+                return View(lesson);
+            }
+        }
+
+
     }
 
 }

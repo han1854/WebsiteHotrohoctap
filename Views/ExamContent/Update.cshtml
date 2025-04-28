@@ -1,49 +1,146 @@
 ﻿@model WebsiteHotrohoctap.Models.ExamContent
 
 @{
-    ViewData["Title"] = "Update";
+    ViewData["Title"] = "Cập nhật câu hỏi";
 }
 
-<h1>Update</h1>
+<h2 class="text-center mt-4">🛠️ Cập nhật câu hỏi</h2>
 
-<h4>ExamContent</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Update">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <form asp-action="Update" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ExamContentID" />
-            <div class="form-group">
-                <label asp-for="QuestionType" class="control-label"></label>
-                <input asp-for="QuestionType" class="form-control" />
+
+            <!-- Loại câu hỏi -->
+            <div class="form-group mb-3">
+                <label asp-for="QuestionType" class="control-label">Loại câu hỏi</label>
+                <select asp-for="QuestionType" class="form-select" id="questionTypeSelect">
+                    <option value="MultipleChoice">Trắc nghiệm</option>
+                    <option value="Code">Viết mã lệnh</option>
+                </select>
                 <span asp-validation-for="QuestionType" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="QuestionText" class="control-label"></label>
-                <input asp-for="QuestionText" class="form-control" />
+
+            <!-- Nội dung câu hỏi -->
+            <div class="form-group mb-3">
+                <label asp-for="QuestionText" class="control-label">Nội dung câu hỏi</label>
+                <textarea asp-for="QuestionText" class="form-control" rows="4">@Model.QuestionText</textarea>
                 <span asp-validation-for="QuestionText" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="CorrectAnswer" class="control-label"></label>
-                <input asp-for="CorrectAnswer" class="form-control" />
-                <span asp-validation-for="CorrectAnswer" class="text-danger"></span>
+
+            <!-- Các lựa chọn cho Multiple Choice -->
+            <div id="multipleChoiceOptions" style="display:none;">
+                @for (int i = 0; i < 4; i++)
+                {
+                    <div class="form-group mb-3">
+                        <label class="control-label">Đáp án @(i + 1)</label>
+                        <div class="input-group">
+                            <div class="input-group-text">
+                                <input type="radio" name="SelectedAnswer" value="@(Model.Options != null && Model.Options.Count > i ? Model.Options[i] : "")" class="option-radio" data-index="@i" @(Model.SelectedAnswer == (Model.Options != null && Model.Options.Count > i ? Model.Options[i] : "") ? "checked" : "") />
+                            </div>
+                            <input type="text" class="form-control option-text" name="Options[@i]" value="@(Model.Options != null && Model.Options.Count > i ? Model.Options[i] : "")" data-index="@i" />
+                        </div>
+                    </div>
+                }
             </div>
-            <div class="form-group">
-                <label asp-for="ExamID" class="control-label"></label>
-                <select asp-for="ExamID" class="form-control" asp-items="ViewBag.ExamID"></select>
+
+            <!-- Code Options -->
+            <div id="codeOptions" style="display: none;">
+                <div class="form-group mb-3">
+                    <label asp-for="Language" class="control-label">Ngôn ngữ lập trình</label>
+                    <select asp-for="Language" class="form-select">
+                        <option value="python3">Python 3</option>
+                        <option value="java">Java</option>
+                        <option value="cpp">C++</option>
+                        <option value="csharp">C#</option>
+                    </select>
+                    <span asp-validation-for="Language" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="StarterCode" class="control-label">Code mẫu (nếu có)</label>
+                    <textarea asp-for="StarterCode" class="form-control" rows="6">@Model.StarterCode</textarea>
+                    <span asp-validation-for="StarterCode" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="SampleInput" class="control-label">Input mẫu (nếu có)</label>
+                    <textarea asp-for="SampleInput" class="form-control" rows="3">@Model.SampleInput</textarea>
+                    <span asp-validation-for="SampleInput" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="ExpectedOutput" class="control-label">Output mong đợi</label>
+                    <textarea asp-for="ExpectedOutput" class="form-control" rows="3">@Model.ExpectedOutput</textarea>
+                    <span asp-validation-for="ExpectedOutput" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- ExamID -->
+            <div class="form-group mb-3">
+                <label asp-for="ExamID" class="control-label">Thuộc bài kiểm tra</label>
+                <select asp-for="ExamID" class="form-select" asp-items="ViewBag.Exams">
+                    <option value="">-- Chọn bài kiểm tra --</option>
+                </select>
                 <span asp-validation-for="ExamID" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <!-- Hidden SelectedAnswer -->
+            <input type="hidden" name="SelectedAnswer" id="SelectedAnswer" value="@Model.SelectedAnswer" />
+
+            <!-- Submit -->
+            <div class="form-group text-center mt-4">
+                <button type="submit" class="btn btn-primary rounded-pill px-5">💾 Lưu thay đổi</button>
+                <a asp-action="Index" class="btn btn-secondary rounded-pill ms-2">⬅️ Quay lại</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        const questionTypeSelect = document.getElementById('questionTypeSelect');
+        const multipleChoiceOptions = document.getElementById('multipleChoiceOptions');
+        const codeOptions = document.getElementById('codeOptions');
+
+        function updateForm() {
+            if (questionTypeSelect.value === 'MultipleChoice') {
+                multipleChoiceOptions.style.display = 'block';
+                codeOptions.style.display = 'none';
+            } else if (questionTypeSelect.value === 'Code') {
+                multipleChoiceOptions.style.display = 'none';
+                codeOptions.style.display = 'block';
+            }
+        }
+
+        questionTypeSelect.addEventListener('change', updateForm);
+
+        document.addEventListener('DOMContentLoaded', function () {
+            updateForm();
+        });
+
+        // Update SelectedAnswer when radio button is changed
+        document.querySelectorAll('.option-radio').forEach(function (radio) {
+            radio.addEventListener('change', function () {
+                document.getElementById('SelectedAnswer').value = this.value;
+            });
+        });
+
+        // Update radio value when input text changes
+        document.querySelectorAll('.option-text').forEach(function (input) {
+            input.addEventListener('input', function () {
+                const index = this.getAttribute('data-index');
+                const radio = document.querySelector(`input.option-radio[data-index="${index}"]`);
+                if (radio) {
+                    radio.value = this.value;
+                    if (radio.checked) {
+                        document.getElementById('SelectedAnswer').value = this.value;
+                    }
+                }
+            });
+        });
+    </script>
 }

@@ -12,7 +12,7 @@ using WebsiteHotrohoctap.Models;
 namespace WebsiteHotrohoctap.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250414151228_new")]
+    [Migration("20250425084615_new")]
     partial class @new
     {
         /// <inheritdoc />
@@ -276,14 +276,30 @@ namespace WebsiteHotrohoctap.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResultID"));
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("ExamDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("ExamID")
                         .HasColumnType("int");
 
+                    b.Property<string>("Input")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Output")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Score")
                         .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -335,7 +351,6 @@ namespace WebsiteHotrohoctap.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ContentType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("LessonID")
@@ -346,6 +361,32 @@ namespace WebsiteHotrohoctap.Migrations
                     b.HasIndex("LessonID");
 
                     b.ToTable("LessonContents");
+                });
+
+            modelBuilder.Entity("WebsiteHotrohoctap.Models.Message", b =>
+                {
+                    b.Property<int>("MessageID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageID"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("MessageID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("WebsiteHotrohoctap.Models.User", b =>
@@ -544,6 +585,17 @@ namespace WebsiteHotrohoctap.Migrations
                         .IsRequired();
 
                     b.Navigation("Lesson");
+                });
+
+            modelBuilder.Entity("WebsiteHotrohoctap.Models.Message", b =>
+                {
+                    b.HasOne("WebsiteHotrohoctap.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WebsiteHotrohoctap.Models.Course", b =>

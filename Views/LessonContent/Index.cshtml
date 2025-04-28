@@ -1,45 +1,65 @@
 @model IEnumerable<WebsiteHotrohoctap.Models.LessonContent>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Danh sách nội dung bài học";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-gradient">Danh sách nội dung bài học</h3>
+        <a asp-action="Create" class="btn btn-outline-primary rounded-pill shadow-sm">➕ Thêm nội dung</a>
+    </div>
 
-<p>
-	
-    <a asp-action="Create" class="btn btn-primary rounded-pill">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ContentType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ContentData)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Lesson)
-            </th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr class="align-middle text-center">
-                <td>@item.ContentType</td>
-                <td>@item.ContentData</td>
-                <td>@item.Lesson?.LessonName</td>
-                <td>
-                    <div class="d-flex justify-content-center gap-2 flex-wrap">
-                        <a asp-action="Update" asp-route-id="@item.LessonID" class="btn btn-sm btn-outline-warning rounded-pill">Sửa</a>
-                        <a asp-action="Details" asp-route-id="@item.LessonID" class="btn btn-sm btn-outline-info rounded-pill">Chi tiết</a>
-                        <a asp-action="Delete" asp-route-id="@item.LessonID" class="btn btn-sm btn-outline-danger rounded-pill">Xóa</a>
-                    </div>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered shadow-sm rounded bg-white align-middle">
+            <thead class="thead-dark">
+                <tr class="text-center">
+                    <th>Loại nội dung</th>
+                    <th>Dữ liệu</th>
+                    <th>Bài học</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="text-center">
+                        <td>@item.ContentType</td>
+                        <td>
+                            @if (item.ContentType == "text")
+                            {
+                                <span>@item.ContentData</span>
+                            }
+                            else if (item.ContentType == "image")
+                            {
+                                <img src="@item.ContentData" style="max-width: 120px; max-height: 100px; border-radius: 6px;" alt="Ảnh" />
+                            }
+                            else if (item.ContentType == "video")
+                            {
+                                if (!string.IsNullOrWhiteSpace(item.ContentData) && item.ContentData.Contains("youtube"))
+                                {
+                                    <iframe width="150" height="90" src="@item.ContentData" frameborder="0" allowfullscreen></iframe>
+                                }
+                                else
+                                {
+                                    <video width="150" height="100" controls style="border-radius: 6px;">
+                                        <source src="@item.ContentData" type="video/mp4" />
+                                        Trình duyệt không hỗ trợ video.
+                                    </video>
+                                }
+                            }
+                        </td>
+                        <td>@item.Lesson?.LessonName</td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                <a asp-action="Edit" asp-route-id="@item.ContentID" class="btn btn-sm btn-outline-warning rounded-pill">Sửa</a>
+                                <a asp-action="Details" asp-route-id="@item.ContentID" class="btn btn-sm btn-outline-info rounded-pill">Chi tiết</a>
+                                <a asp-action="Delete" asp-route-id="@item.ContentID" class="btn btn-sm btn-outline-danger rounded-pill">Xóa</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

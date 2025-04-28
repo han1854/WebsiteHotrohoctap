@@ -1,53 +1,65 @@
 ﻿@model IEnumerable<WebsiteHotrohoctap.Models.ExamContent>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Danh sách câu hỏi";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-gradient">📋 Danh sách câu hỏi</h3>
+        <a asp-action="Create" class="btn btn-primary rounded-pill shadow-sm">
+            ➕ Thêm câu hỏi
+        </a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.QuestionType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.QuestionText)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CorrectAnswer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Exam)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.QuestionType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.QuestionText)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CorrectAnswer)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Exam.ExamID)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ExamContentID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ExamContentID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ExamContentID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="table-responsive shadow-sm rounded bg-white p-3">
+        <table class="table table-hover table-bordered align-middle">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>Loại câu hỏi</th>
+                    <th class="text-start">Nội dung</th>
+                    <th class="text-start">Đáp án/Code mẫu</th>
+                    <th>Thuộc bài kiểm tra</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-center">
+                            @(item.QuestionType == "MultipleChoice" ? "Trắc nghiệm" : "Viết mã")
+                        </td>
+
+                        <td class="text-start" style="max-width: 400px; word-break: break-word;">
+                            @item.QuestionText
+                        </td>
+
+                        <td class="text-start" style="max-width: 400px; white-space: pre-wrap;">
+                            @if (item.QuestionType == "MultipleChoice")
+                            {
+                                <span>@item.SelectedAnswer</span>
+                            }
+                            else if (item.QuestionType == "Code")
+                            {
+                                <pre class="bg-light p-2 rounded small">@item.StarterCode</pre>
+                            }
+                        </td>
+
+                        <td class="text-center">
+                            @item.Exam?.ExamName
+                        </td>
+
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                <a asp-action="Update" asp-route-id="@item.ExamContentID" class="btn btn-sm btn-outline-warning rounded-pill">Sửa</a>
+                                <a asp-action="Details" asp-route-id="@item.ExamContentID" class="btn btn-sm btn-outline-info rounded-pill">Chi tiết</a>
+                                <a asp-action="Delete" asp-route-id="@item.ExamContentID" class="btn btn-sm btn-outline-danger rounded-pill">Xóa</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

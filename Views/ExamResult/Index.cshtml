@@ -1,47 +1,38 @@
 ﻿@model IEnumerable<WebsiteHotrohoctap.Models.ExamResult>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Danh sách kết quả thi";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Score)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ExamDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Exam)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Score)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ExamDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Exam.ExamID)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ResultID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ResultID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ResultID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="container mt-4">
+    <h2 class="text-center">Danh sách kết quả thi</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Người dùng</th>
+                <th>Bài thi</th>
+                <th>Điểm</th>
+                <th>Trạng thái</th>
+                <th>Ngày làm bài</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var result in Model)
+            {
+                <tr>
+                    <td>@result.User.UserName</td>
+                    <td>@result.Exam.ExamName</td>
+                    <td>@string.Format("{0:F2}", result.Score / 100.0)</td>
+                    <td>@result.Status</td>
+                    <td>@result.ExamDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <a href="@Url.Action("ResultDetails", "ExamResult", new { id = result.ResultID })" class="btn btn-info">Xem chi tiết</a>
+                        <a href="@Url.Action("Update", "ExamResult", new { id = result.ResultID })" class="btn btn-warning">Chỉnh sửa</a>
+                        <a href="@Url.Action("Delete", "ExamResult", new { id = result.ResultID })" class="btn btn-danger">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

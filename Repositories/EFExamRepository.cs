@@ -18,11 +18,17 @@ namespace WebsiteHotrohoctap.Repositories
                 .Include(e => e.Lesson)
                 .ToListAsync();
         }
+        public async Task<Exam> GetExamWithContentsAsync(int examId)
+        {
+            return await _context.Exams
+                .Include(e => e.ExamContents)
+                .FirstOrDefaultAsync(e => e.ExamID == examId);
+        }
 
         public async Task<Exam> GetByIdAsync(int id)
         {
             return await _context.Exams
-                .Include(e => e.Lesson) // Include nếu cần liên kết với Lesson
+                .Include(e => e.Lesson)
                 .FirstOrDefaultAsync(e => e.ExamID == id);
         }
 

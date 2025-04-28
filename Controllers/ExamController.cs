@@ -24,7 +24,7 @@ namespace WebsiteHotrohoctap.Controllers
         public async Task<IActionResult> Create()
         {
             var lessons = await _lessonRepository.GetAllAsync();
-            ViewBag.Lessons = new SelectList(lessons, "Id", "Name");
+            ViewBag.Lessons = new SelectList(lessons, "LessonID", "LessonName");
 
             return View();
         }
@@ -38,7 +38,7 @@ namespace WebsiteHotrohoctap.Controllers
                 return RedirectToAction(nameof(Index));
             }
             var lessons = await _lessonRepository.GetAllAsync();
-            ViewBag.Lessons = new SelectList(lessons, "Id", "Name");
+            ViewBag.Lessons = new SelectList(lessons, "LessonID", "LessonName");
             return View(exam);
         }
         private async Task<string> SaveImage(IFormFile image)
@@ -69,7 +69,7 @@ namespace WebsiteHotrohoctap.Controllers
             }
 
             var lessons = await _lessonRepository.GetAllAsync();
-            ViewBag.Lessons = new SelectList(lessons, "Id", "Name", exams.LessonID);
+            ViewBag.Lessons = new SelectList(lessons, "LessonID", "LessonName", exams.LessonID);
             return View(exams);
         }
         [Authorize(Roles = SD.Role_Admin)]
@@ -92,7 +92,7 @@ namespace WebsiteHotrohoctap.Controllers
                 return RedirectToAction(nameof(Index));
             }
             var lessons = await _lessonRepository.GetAllAsync();
-            ViewBag.Lessons = new SelectList(lessons, "Id", "Name");
+            ViewBag.Lessons = new SelectList(lessons, "LessonID", "LessonName");
             return View(exam);
         }
 

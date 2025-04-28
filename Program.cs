@@ -3,12 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using WebsiteHotrohoctap.Hubs;
 using WebsiteHotrohoctap.Models;
 using WebsiteHotrohoctap.Repositories;
+using WebsiteHotrohoctap.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddHttpClient<JDoodleService>();
 
 builder.Services.AddSignalR();
 
@@ -81,11 +83,6 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
 }
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-}
 app.UseStaticFiles();
 
 app.UseRouting();
