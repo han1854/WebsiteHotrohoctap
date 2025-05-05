@@ -50,5 +50,11 @@ namespace WebsiteHotrohoctap.Repositories
             _context.Exams.Remove(exam);
             await _context.SaveChangesAsync();
         }
+        public async Task<IEnumerable<ExamContent>> GetTestCasesAsync(int examId)
+        {
+            return await _context.ExamContents
+                .Where(ec => ec.ExamID == examId)
+                .ToListAsync();
+        }
     }
 }

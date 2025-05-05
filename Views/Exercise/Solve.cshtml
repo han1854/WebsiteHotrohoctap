@@ -1,146 +1,215 @@
 ﻿@model WebsiteHotrohoctap.Models.ViewModels.ExamViewModel
 
 @{
-    ViewData["Title"] = "Giải bài tập";
+    ViewData["Title"] = "Giải bài";
+    var languageMap = new Dictionary<string, string>
+    {
+        { "python3", "Python 3" },
+        { "cpp17", "C++17" }
+    };
 }
 
-<h1>@Model.ExamName</h1>
+<style>
+    .container {
+        display: flex;
+        max-width: 1200px;
+        margin: 20px auto;
+        gap: 20px;
+        font-family: Arial, sans-serif;
+    }
 
-<div class="row">
-    <div class="col-md-6">
-        <h3>Mô tả bài tập</h3>
-        <p>@Model.ProblemDescription</p>
-        <h4>Input mẫu</h4>
-        <pre>@Model.SampleInput</pre>
-        <h4>Output mẫu</h4>
-        <pre>@Model.SampleOutput</pre>
+    .problem-description {
+        flex: 1;
+        padding: 20px;
+        background-color: #f5f5f5;
+        border-radius: 5px;
+        max-width: 50%;
+    }
+
+    .code-editor {
+        flex: 1;
+        padding: 20px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 2px;
+        max-width: 50%;
+    }
+
+    .editor-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .language-select {
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+    }
+
+    textarea {
+        width: 100%;
+        height: 200px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        background-color: #f9f9f9;
+        resize: vertical;
+    }
+
+    .input-output {
+        margin-top: 10px;
+    }
+
+        .input-output textarea {
+            height: 100px;
+        }
+
+    .run-button, .submit-button {
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .run-button {
+        background-color: #2ecc71;
+        color: white;
+        margin-right: 10px;
+    }
+
+        .run-button:hover {
+            background-color: #27ae60;
+        }
+
+    .submit-button {
+        background-color: #3498db;
+        color: white;
+    }
+
+        .submit-button:hover {
+            background-color: #2980b9;
+        }
+
+    #output {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        white-space: pre-wrap;
+    }
+
+    .result-accepted {
+        color: #2ecc71;
+    }
+
+    .result-wrong {
+        color: #e74c3c;
+    }
+
+    .result-error {
+        color: #e67e22;
+    }
+</style>
+
+<div class="container">
+    <div class="problem-description">
+        <h2>Mô tả bài tập</h2>
+        <p>@(Model.ProblemDescription ?? "Không có mô tả.")</p>
+
+        <h3>Input mẫu</h3>
+        <pre>@(Model.SampleInput ?? "Không có input mẫu.")</pre>
+
+        <h3>Output mẫu</h3>
+        <pre>@(Model.SampleOutput ?? "Không có output mẫu.")</pre>
     </div>
-    <div class="col-md-6">
-        <h3>Soạn thảo mã</h3>
-        <div class="language-selector mb-3">
-            <label for="language">Ngôn ngữ:</label>
-            <select id="language" name="language" class="form-control">
-                <option value="11">C (gcc)</option>
-                <option value="1">C++ (g++)</option>
-                <option value="116">Python 3</option>
-                <option value="10">Java</option>
+
+    <div class="code-editor">
+        <div class="editor-header">
+            <select name="language" id="language" class="language-select">
+                @foreach (var lang in languageMap)
+                {
+                    <option value="@lang.Key" selected="@(lang.Key == "python3" ? "selected" : null)">@lang.Value</option>
+                }
             </select>
+            <div>
+                <button type="button" id="runCodeBtn" class="run-button">Run Code</button>
+                <button type="button" id="submitCodeBtn" class="submit-button">Submit Code</button>
+            </div>
         </div>
-        <div id="editor" style="height: 400px;"></div>
-        <div class="mt-3">
-            <h4>Input</h4>
-            <textarea id="inputText" class="form-control" rows="3"></textarea>
+
+        <textarea name="code" id="code" placeholder="Nhập code của bạn...">print(sum(list(map(int, input().split()))))</textarea>
+
+        <div class="input-output">
+            <label for="input">Input (tùy ý):</label>
+            <textarea name="input" id="input" placeholder="Nhập input tùy ý...">@(Model.SampleInput ?? "")</textarea>
         </div>
-        <div class="mt-3">
-            <button id="runCode" class="btn btn-primary">Run</button>
-            <button id="submitCode" class="btn btn-success">Submit</button>
-        </div>
-        <div class="mt-3">
-            <h4>Output</h4>
-            <pre id="outputText"></pre>
-        </div>
-        <div id="testResult" class="mt-3"></div>
+
+        <div id="output"></div>
+        <input type="hidden" name="examId" value="@Model.ExamID" />
     </div>
 </div>
 
-@section Styles {
-    <style>
-        #editor {
-            border: 1px solid #ccc;
-        }
-
-        .error-details {
-            margin-top: 10px;
-            padding: 10px;
-            border: 1px solid #dc3545;
-            border-radius: 5px;
-            background-color: #f8d7da;
-            color: #dc3545;
-        }
-    </style>
-}
-
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        var editor = ace.edit("editor");
-        editor.setTheme("ace/theme/monokai");
-        editor.session.setMode("ace/mode/c_cpp");
+        $(document).ready(function () {
+            $('#runCodeBtn').click(function () {
+                var formData = $('textarea[name="code"], textarea[name="input"], select[name="language"], input[name="examId"]').serialize();
+                console.log("Sending data (Run):", formData);
 
-        const language = document.getElementById("language");
-        language.addEventListener("change", () => {
-            let aceMode = "ace/mode/c_cpp";
-            if (language.value === "116") aceMode = "ace/mode/python";
-            else if (language.value === "10") aceMode = "ace/mode/java";
-            editor.session.setMode(aceMode);
-        });
-
-        document.getElementById("runCode").addEventListener("click", async () => {
-            const code = editor.getValue();
-            const input = document.getElementById("inputText").value;
-            const examId = @Model.ExamID;
-            const language = document.getElementById("language").value;
-
-            try {
-                const response = await fetch('/Exercise/RunCode', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
+                $.ajax({
+                    url: '@Url.Action("RunCode", "Exercise")',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        console.log("Response:", response);
+                        if (response.success) {
+                            $('#output').html('<strong>Kết quả:</strong><pre>' + response.output + '</pre>');
+                        } else {
+                            $('#output').html('<strong>Lỗi:</strong><pre>' + response.error + '</pre>');
+                        }
                     },
-                    body: JSON.stringify({ examId, code, input, language })
-                });
-
-                const result = await response.json();
-                const outputText = document.getElementById("outputText");
-
-                if (result.success) {
-                    outputText.textContent = result.output || "Không có output";
-                } else {
-                    outputText.textContent = result.error || "Lỗi không xác định";
-                }
-            } catch (error) {
-                document.getElementById("outputText").textContent = "Lỗi khi chạy mã: " + error.message;
-            }
-        });
-
-        document.getElementById("submitCode").addEventListener("click", async () => {
-            const code = editor.getValue();
-            const examId = @Model.ExamID;
-            const language = document.getElementById("language").value;
-
-            try {
-                const response = await fetch('/Exercise/SubmitCode', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ examId, code, language })
-                });
-
-                const result = await response.json();
-                const outputText = document.getElementById("outputText");
-                const testResult = document.getElementById("testResult");
-
-                if (result.success) {
-                    outputText.textContent = result.output || "Không có output";
-                    if (result.passed) {
-                        testResult.innerHTML = '<span class="text-success">Test Case Passed!</span>';
-                    } else {
-                        testResult.innerHTML = '<span class="text-danger">Test Case Failed!</span>' +
-                            '<div class="error-details">' +
-                            '<strong>Lý do:</strong> ' + (result.errorMessage || 'Không xác định') + '<br>' +
-                            '<strong>Đầu ra mong đợi:</strong><pre>' + result.expectedOutput + '</pre>' +
-                            '<strong>Đầu ra thực tế:</strong><pre>' + result.output + '</pre>' +
-                            '</div>';
+                    error: function (xhr, status, error) {
+                        console.log("AJAX error:", status, error);
+                        $('#output').html('<strong>Lỗi hệ thống:</strong><pre>' + error + '</pre>');
                     }
-                } else {
-                    outputText.textContent = result.error || "Lỗi không xác định";
-                    testResult.textContent = '';
-                }
-            } catch (error) {
-                document.getElementById("outputText").textContent = "Lỗi khi chạy mã: " + error.message;
-                document.getElementById("testResult").textContent = '';
-            }
+                });
+            });
+
+            $('#submitCodeBtn').click(function () {
+                var formData = $('textarea[name="code"], select[name="language"], input[name="examId"]').serialize();
+                console.log("Sending data (Submit):", formData);
+
+                $.ajax({
+                    url: '@Url.Action("SubmitCode", "Exercise")',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        console.log("Response:", response);
+                        if (response.success) {
+                            let statusClass = '';
+                            if (response.status === 'Accepted') statusClass = 'result-accepted';
+                            else if (response.status === 'Wrong Answer') statusClass = 'result-wrong';
+                            else if (response.status === 'Runtime Error') statusClass = 'result-error';
+
+                            $('#output').html('<strong>Kết quả nộp bài:</strong><br>' +
+                                '<span class="' + statusClass + '">Trạng thái: ' + response.status + '</span><br>' +
+                                'Số test case vượt qua: ' + response.passed + '/' + response.total + '<br>' +
+                                'Điểm: ' + response.score);
+                        } else {
+                            $('#output').html('<strong>Lỗi:</strong><pre>' + response.error + '</pre>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("AJAX error:", status, error);
+                        $('#output').html('<strong>Lỗi hệ thống:</strong><pre>' + error + '</pre>');
+                    }
+                });
+            });
         });
     </script>
 }
