@@ -1,20 +1,20 @@
 ﻿@model IEnumerable<WebsiteHotrohoctap.Models.Exam>
 
 @{
-    ViewData["Title"] = "Danh sách bài kiểm tra";
+    ViewData["Title"] = "Danh sách bài tập";
 }
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="text-gradient">Danh sách bài kiểm tra</h3>
-        <a asp-action="Create" class="btn btn-outline-primary rounded-pill shadow-sm">➕ Thêm bài kiểm tra</a>
+        <h3 class="text-gradient">Danh sách bài tập</h3>
+        <a asp-action="Create" class="btn btn-outline-primary rounded-pill shadow-sm">➕ Thêm bài tập</a>
     </div>
 
     <div class="table-responsive">
         <table class="table table-hover table-bordered shadow-sm rounded bg-white">
             <thead class="thead-dark">
                 <tr class="text-center">
-                    <th>Tên bài kiểm tra</th>
+                    <th>Tên bài tập</th>
                     <th>Mô tả</th>
                     <th>Tổng điểm</th>
                     <th>Thuộc bài học</th>
@@ -33,7 +33,7 @@
                             <div class="d-flex justify-content-center gap-2 flex-wrap">
                                 <a asp-action="Update" asp-route-id="@item.ExamID" class="btn btn-sm btn-outline-warning rounded-pill">Sửa</a>
                                 <a asp-controller="ExamContent" asp-action="Index" asp-route-id="@item.ExamID" class="btn btn-sm btn-outline-info rounded-pill">Câu hỏi</a>
-                                <a asp-action="Delete" asp-route-id="@item.ExamID" class="btn btn-sm btn-outline-danger rounded-pill" onclick="return confirm('Bạn có chắc chắn muốn xóa bài kiểm tra này không?');">Xóa</a>
+                                <a asp-action="Delete" asp-route-id="@item.ExamID" class="btn btn-sm btn-outline-danger rounded-pill">Xóa</a>
                             </div>
                         </td>
                     </tr>
@@ -42,3 +42,6 @@
         </table>
     </div>
 </div>
+
+
+

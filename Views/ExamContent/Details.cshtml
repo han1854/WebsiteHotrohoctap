@@ -21,23 +21,27 @@
 
             @if (Model.QuestionType == "MultipleChoice")
             {
-                <!-- Các lựa chọn và đáp án đúng -->
+                <!-- Các lựa chọn -->
                 <dt class="col-sm-3">Các lựa chọn</dt>
                 <dd class="col-sm-9">
                     <ul class="list-group list-group-flush">
                         @for (int i = 0; i < (Model.Options?.Count ?? 0); i++)
                         {
-                            var isCorrect = Model.Options[i] == Model.SelectedAnswer;
-                            <li class="list-group-item @(isCorrect ? "list-group-item-success" : "")">
+                            <li class="list-group-item">
                                 <strong>@(i + 1).</strong> @Model.Options[i]
-                                @if (isCorrect)
-                                {
-                                    <span class="badge bg-success ms-2">Đáp án đúng</span>
-                                }
                             </li>
                         }
                     </ul>
                 </dd>
+
+                <!-- Đáp án đúng -->
+                @if (!string.IsNullOrWhiteSpace(Model.CorrectAnswer))
+                {
+                    <dt class="col-sm-3">Đáp án đúng</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge bg-success">@Model.CorrectAnswer</span>
+                    </dd>
+                }
             }
             else if (Model.QuestionType == "Code")
             {
@@ -63,12 +67,12 @@
                     </dd>
                 }
 
-                <!-- Output mong đợi -->
-                @if (!string.IsNullOrWhiteSpace(Model.ExpectedOutput))
+                <!-- Output mẫu -->
+                @if (!string.IsNullOrWhiteSpace(Model.SampleOutput))
                 {
-                    <dt class="col-sm-3">Output mong đợi</dt>
+                    <dt class="col-sm-3">Output mẫu</dt>
                     <dd class="col-sm-9">
-                        <pre class="bg-light p-3 rounded">@Model.ExpectedOutput</pre>
+                        <pre class="bg-light p-3 rounded">@Model.SampleOutput</pre>
                     </dd>
                 }
 

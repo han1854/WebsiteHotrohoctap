@@ -1,87 +1,91 @@
 ﻿@model WebsiteHotrohoctap.Models.LessonContent
 
 @{
-    ViewData["Title"] = "Update";
+    ViewData["Title"] = "Cập nhật Nội Dung Bài Học";
 }
 
-<h1>Update</h1>
-
-<h4>LessonContent</h4>
+<h1>Cập nhật Nội Dung Bài Học</h1>
 <hr />
+
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Update" enctype="multipart/form-data">
+        <form asp-action="Update" enctype="multipart/form-data" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ContentID" />
 
-            <div class="form-group">
-                <label asp-for="ContentType" class="control-label"></label>
-                <select asp-for="ContentType" class="form-control" id="contentType">
-                    <option value="text" selected="@((Model.ContentType == "text").ToString().ToLower())">Văn bản</option>
-                    <option value="image" selected="@((Model.ContentType == "image").ToString().ToLower())">Hình ảnh</option>
-                    <option value="video" selected="@((Model.ContentType == "video").ToString().ToLower())">Video</option>
+            <div class="form-group mb-3">
+                <label asp-for="ContentType">Loại nội dung</label>
+                <select asp-for="ContentType" class="form-control" id="contentTypeSelect">
+                    <option value="">-- Chọn loại nội dung --</option>
+                    <option value="text" selected="@(Model.ContentType == "text")">Văn bản</option>
+                    <option value="image" selected="@(Model.ContentType == "image")">Hình ảnh</option>
+                    <option value="video" selected="@(Model.ContentType == "video")">Video</option>
                 </select>
-                <span asp-validation-for="ContentType" class="text-danger"></span>
             </div>
 
-            <div class="form-group" id="textInput">
+            <!-- Văn bản -->
+            <div class="form-group mb-3" id="textInput" style="display:none;">
                 <label>Nội dung văn bản</label>
-                <textarea asp-for="ContentData" class="form-control" rows="4"></textarea>
+                <textarea asp-for="ContentData" name="TextContent" class="form-control" rows="5"></textarea>
             </div>
 
-            <div class="form-group d-none" id="imageInput">
-                <label>Chọn ảnh mới (hoặc để trống nếu giữ ảnh cũ)</label>
-                <input type="file" name="imageFile" class="form-control" />
+            <!-- Ảnh -->
+            <div class="form-group mb-3" id="imageInput" style="display:none;">
+                <label>Chọn ảnh mới (hoặc giữ nguyên ảnh cũ)</label>
+                <input type="file" name="ImageFile" class="form-control" accept="image/*" />
                 @if (!string.IsNullOrEmpty(Model.ContentData))
                 {
-                    <p>Ảnh hiện tại:</p>
-                    <img src="@Model.ContentData" width="200" />
+                    <div class="mt-2">
+                        <p>Ảnh hiện tại:</p>
+                        <img src="@Model.ContentData" width="200" class="img-thumbnail" />
+                    </div>
                 }
             </div>
 
-            <div class="form-group d-none" id="videoInput">
+            <!-- Video -->
+            <div class="form-group mb-3" id="videoInput" style="display:none;">
                 <label>Link video</label>
-                <input type="text" name="videoUrl" class="form-control" value="@Model.ContentData" />
+                <input type="text" name="VideoUrl" class="form-control" value="@Model.ContentData" placeholder="https://youtube.com/..." />
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="LessonID">Chọn bài học</label>
+                <select asp-for="LessonID" class="form-control" asp-items="ViewBag.Lessons"></select>
             </div>
 
             <div class="form-group">
-                <label asp-for="LessonID" class="control-label"></label>
-                <select asp-for="LessonID" class="form-control" asp-items="ViewBag.Lessons"></select>
-                <span asp-validation-for="LessonID" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mt-3">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Cập nhật" class="btn btn-success" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" class="btn btn-secondary mt-3">← Quay lại danh sách</a>
 </div>
 
 @section Scripts {
     <script>
         function toggleInputs() {
-            const type = document.getElementById('contentType').value;
-            document.getElementById('textInput').classList.add('d-none');
-            document.getElementById('imageInput').classList.add('d-none');
-            document.getElementById('videoInput').classList.add('d-none');
-
-            if (type === 'text') {
-                document.getElementById('textInput').classList.remove('d-none');
-            } else if (type === 'image') {
-                document.getElementById('imageInput').classList.remove('d-none');
-            } else if (type === 'video') {
-                document.getElementById('videoInput').classList.remove('d-none');
-            }
+            const type = document.getElementById('contentTypeSelect').value;
+            document.getElementById('textInput').style.display = (type === 'text') ? 'block' : 'none';
+            document.getElementById('imageInput').style.display = (type === 'image') ? 'block' : 'none';
+            document.getElementById('videoInput').style.display = (type === 'video') ? 'block' : 'none';
         }
 
-        document.getElementById('contentType').addEventListener('change', toggleInputs);
+        document.getElementById('contentTypeSelect').addEventListener('change', toggleInputs);
         window.onload = toggleInputs;
     </script>
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger mt-3">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
 }
