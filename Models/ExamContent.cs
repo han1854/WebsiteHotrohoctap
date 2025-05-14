@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebsiteHotrohoctap.Models
 {
@@ -18,17 +19,21 @@ namespace WebsiteHotrohoctap.Models
         [Required]
         public int ExamID { get; set; }
         public Exam? Exam { get; set; }
+        public string OptionsJson { get; set; } = "[]";
 
-        // --------- Thêm cho dạng Code ----------
-        public string? Language { get; set; }
+        [NotMapped]
+        public List<string> Options
+        {
+            get => string.IsNullOrEmpty(OptionsJson)
+                ? new List<string>()
+                : System.Text.Json.JsonSerializer.Deserialize<List<string>>(OptionsJson);
+            set => OptionsJson = System.Text.Json.JsonSerializer.Serialize(value);
+        }
+
         public string? StarterCode { get; set; }
         public string? SampleInput { get; set; }
-        public string? ExpectedOutput { get; set; }
-
-        // --------- Thêm cho dạng Trắc nghiệm ----------
-        public List<string> Options { get; set; } = new List<string>();
-
-        [Required(ErrorMessage = "Vui lòng chọn đáp án đúng.")]
-        public string SelectedAnswer { get; set; }
+        public string? SampleOutput { get; set; }
+        public string? Status { get; set; }
+        public string? Language { get; set; }
     }
 }

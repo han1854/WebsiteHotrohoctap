@@ -1,39 +1,59 @@
 ﻿@model WebsiteHotrohoctap.Models.LessonContent
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Xóa Nội Dung Bài Học";
 }
 
-<h1>Delete</h1>
+<h2 class="mb-4">Xóa Nội Dung Bài Học</h2>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>LessonContent</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ContentType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ContentType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ContentData)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ContentData)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Lesson)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Lesson.LessonName)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
+<div class="card shadow p-4 mb-5 bg-white rounded">
+    <div class="alert alert-warning">
+        <strong>Bạn có chắc chắn muốn xóa nội dung này không?</strong>
+    </div>
+
+    <div class="mb-3">
+        <strong>Loại nội dung:</strong> @Model.ContentType
+    </div>
+
+    <div class="mb-3">
+        <strong>Nội dung:</strong>
+        <div class="border rounded p-3 mt-2" style="background-color: #f9f9f9;">
+            @if (Model.ContentType == "text")
+            {
+                <p>@Model.ContentData</p>
+            }
+            else if (Model.ContentType == "image")
+            {
+                <img src="@Model.ContentData" alt="Ảnh nội dung" class="img-fluid" />
+            }
+            else if (Model.ContentType == "video")
+            {
+                @if (!string.IsNullOrEmpty(Model.ContentData) && (Model.ContentData.StartsWith("/videos/") || Model.ContentData.EndsWith(".mp4")))
+                {
+                    <video controls style="width: 100%; max-height: 400px;">
+                        <source src="@Model.ContentData" type="video/mp4" />
+                        Trình duyệt của bạn không hỗ trợ video.
+                    </video>
+                }
+                else
+                {
+                    <a href="@Model.ContentData" target="_blank">@Model.ContentData</a>
+                }
+            }
+            else
+            {
+                <p>Không xác định loại nội dung</p>
+            }
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <strong>Thuộc bài học:</strong> @Model.Lesson?.LessonName
+    </div>
+
+    <form asp-action="DeleteConfirmed" method="post" class="mt-4">
         <input type="hidden" asp-for="ContentID" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index" class="btn btn-success">Back to List</a>
+        <button type="submit" class="btn btn-danger">Xóa</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">← Quay lại danh sách</a>
     </form>
 </div>

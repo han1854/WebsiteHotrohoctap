@@ -7,71 +7,67 @@
 
 <div class="container mt-5">
     <div class="text-center mb-5">
-        <h2 class="fw-bold">@Model.ExamName</h2>
+        <h2 class="fw-bold">🎯 Làm bài kiểm tra: @Model.ExamName</h2>
         <p class="text-muted">@Model.Description</p>
     </div>
 
-    <form method="post" asp-action="SubmitExam" asp-route-examId="@Model.ExamID">
-        @foreach (var question in Model.ExamContents)
-        {
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white border-bottom">
-                    <h5 class="mb-0 fw-semibold">Câu hỏi: @question.QuestionText</h5>
-                </div>
+    <form method="post" asp-action="SubmitExam" id="examForm">
+        <input type="hidden" name="examId" value="@Model.ExamID" />
 
-                <div class="card-body">
-                    @if (question.QuestionType == "MultipleChoice")
-                    {
-                        <div class="form-group">
-                            @for (int i = 0; i < (question.Options?.Count ?? 0); i++)
+        @if (Model.ExamContents != null && Model.ExamContents.Any())
+        {
+            <div class="d-flex flex-column gap-4">
+                @for (int i = 0; i < Model.ExamContents.Count; i++)
+                {
+                    var question = Model.ExamContents[i];
+                    var questionType = question.QuestionType;
+
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="fw-semibold mb-3">Câu hỏi @((i + 1)): @question.QuestionText</h5>
+
+                            @if (questionType == "MultipleChoice")
                             {
-                                var option = question.Options[i];
-                                var inputId = $"option_{question.ExamContentID}_{i}";
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" id="@inputId" name="answers[@question.ExamContentID]" value="@option" />
-                                    <label class="form-check-label" for="@inputId">@option</label>
+                                <div>
+                                    @foreach (var option in question.Options)
+                                    {
+                                        var optionId = $"option_{i}_{option.GetHashCode()}"; // Dùng GetHashCode() để tạo id duy nhất
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="answers[@i]" value="@option" id="@optionId" />
+                                            <label class="form-check-label" for="@optionId">
+                                                @option
+                                            </label>
+                                        </div>
+                                    }
                                 </div>
                             }
-                        </div>
-                    }
-                    else if (question.QuestionType == "Code")
-                    {
-                        <div class="mb-3">
-                            @if (!string.IsNullOrEmpty(question.SampleInput))
+                            else if (questionType == "Code")
                             {
-                                <label class="fw-bold">Input yêu cầu:</label>
-                                <pre class="bg-light p-3 rounded">@question.SampleInput</pre>
+                                <div>
+                                    <label for="code_@i">Viết mã của bạn:</label>
+                                    <textarea class="form-control" name="codes[@i]" id="code_@i" rows="6"></textarea>
+                                </div>
                             }
 
-                            @if (!string.IsNullOrEmpty(question.ExpectedOutput))
-                            {
-                                <label class="fw-bold">Output mong đợi:</label>
-                                <pre class="bg-light p-3 rounded">@question.ExpectedOutput</pre>
-                            }
+                            <div class="mt-2 text-muted">
+                                <small><i>Loại câu hỏi: @(questionType == "MultipleChoice" ? "Trắc nghiệm" : "Viết mã")</i></small>
+                            </div>
                         </div>
-
-                        <div class="form-group">
-                            <label class="fw-bold" for="codeInput_@question.ExamContentID">Viết mã:</label>
-                            <textarea class="form-control border rounded"
-                                      name="codes[@question.ExamContentID]"
-                                      id="codeInput_@question.ExamContentID"
-                                      rows="10"
-                                      style="background-color: #f9fafb; font-family: Consolas, monospace;"
-                                      placeholder="Nhập đoạn mã của bạn tại đây..."></textarea>
-                        </div>
-                    }
-                </div>
+                    </div>
+                }
             </div>
         }
+        else
+        {
+            <p class="text-center text-muted">Không có câu hỏi nào trong bài thi này.</p>
+        }
 
-        <div class="text-center">
-            <button type="submit" class="btn btn-success btn-lg rounded-pill px-5 shadow-sm">Nộp bài</button>
+        <div class="text-center mt-5">
+            <button type="submit" class="btn btn-primary rounded-pill px-4">Nộp bài</button>
         </div>
     </form>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

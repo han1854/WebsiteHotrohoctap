@@ -38,11 +38,11 @@
                         <td class="text-start" style="max-width: 400px; white-space: pre-wrap;">
                             @if (item.QuestionType == "MultipleChoice")
                             {
-                                <span>@item.SelectedAnswer</span>
+                                <span>@item.CorrectAnswer</span>
                             }
                             else if (item.QuestionType == "Code")
                             {
-                                <pre class="bg-light p-2 rounded small">@item.StarterCode</pre>
+                                <pre class="bg-light p-2 rounded small">@item.CorrectAnswer</pre>
                             }
                         </td>
 

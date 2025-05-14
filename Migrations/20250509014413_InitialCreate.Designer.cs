@@ -12,8 +12,8 @@ using WebsiteHotrohoctap.Models;
 namespace WebsiteHotrohoctap.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250425084615_new")]
-    partial class @new
+    [Migration("20250509014413_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -247,18 +247,37 @@ namespace WebsiteHotrohoctap.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExamContentID"));
 
                     b.Property<string>("CorrectAnswer")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ExamID")
                         .HasColumnType("int");
 
-                    b.Property<string>("QuestionText")
+                    b.Property<string>("Language")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OptionsJson")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("QuestionText")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<string>("QuestionType")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SampleInput")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SampleOutput")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StarterCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ExamContentID");
@@ -276,8 +295,10 @@ namespace WebsiteHotrohoctap.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResultID"));
 
+                    b.Property<string>("Answer")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Code")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("ExamDate")
@@ -287,21 +308,19 @@ namespace WebsiteHotrohoctap.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Input")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Output")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Score")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ResultID");
@@ -351,6 +370,7 @@ namespace WebsiteHotrohoctap.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ContentType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("LessonID")
@@ -558,7 +578,9 @@ namespace WebsiteHotrohoctap.Migrations
 
                     b.HasOne("WebsiteHotrohoctap.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Exam");
 

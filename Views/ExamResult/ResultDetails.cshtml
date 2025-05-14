@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Kết quả bài thi";
     Layout = "_Layout";
+    var answerList = Model.Answer?.Split(';') ?? Array.Empty<string>();
+    var outputList = Model.Output?.Split(';') ?? Array.Empty<string>();
 }
 
 <div class="container mt-5">
@@ -19,20 +21,20 @@
             @for (int i = 0; i < Model.Exam.ExamContents.Count; i++)
             {
                 var question = Model.Exam.ExamContents[i];
-                var userAnswer = Model.Answer?.Split(';').ElementAtOrDefault(i);
-                var correctAnswer = question.SelectedAnswer;
-                string result = string.Empty;
+                var questionType = question.QuestionType;
+                string? userAnswer = answerList.ElementAtOrDefault(i);
+                string? userOutput = outputList.ElementAtOrDefault(i);
+                string? correctAnswer = question.CorrectAnswer;
+                string? expectedOutput = question.SampleOutput;
+
                 bool isCorrect = false;
 
-                // Xử lý kết quả
-                if (question.QuestionType == "MultipleChoice")
+                if (questionType == "MultipleChoice")
                 {
                     isCorrect = userAnswer == correctAnswer;
                 }
-                else if (question.QuestionType == "Code")
+                else if (questionType == "Code")
                 {
-                    var userOutput = Model.Output?.Split(';').ElementAtOrDefault(i);
-                    var expectedOutput = question.ExpectedOutput;
                     isCorrect = userOutput == expectedOutput;
                 }
 
@@ -45,28 +47,53 @@
                             <p class="mb-0">
                                 <span class="badge bg-success">Đúng</span>
                             </p>
-                            <p class="mt-2">
-                                <strong>Đáp án:</strong>
-                                <span class="text-success fw-bold">@correctAnswer</span>
-                            </p>
+                            @if (questionType == "MultipleChoice")
+                            {
+                                <p class="mt-2">
+                                    <strong>Đáp án:</strong>
+                                    <span class="text-success fw-bold">@correctAnswer</span>
+                                </p>
+                            }
+                            else
+                            {
+                                <p class="mt-2">
+                                    <strong>Output của bạn:</strong>
+                                    <pre class="bg-light p-2 rounded">@userOutput</pre>
+                                </p>
+                            }
                         }
                         else
                         {
                             <p class="mb-0">
                                 <span class="badge bg-danger">Sai</span>
                             </p>
-                            <p class="mt-2">
-                                <strong>Đáp án của bạn:</strong>
-                                <span class="text-danger fw-bold">@userAnswer</span>
-                            </p>
-                            <p>
-                                <strong>Đáp án đúng:</strong>
-                                <span class="text-success fw-bold">@correctAnswer</span>
-                            </p>
+
+                            @if (questionType == "MultipleChoice")
+                            {
+                                <p class="mt-2">
+                                    <strong>Đáp án của bạn:</strong>
+                                    <span class="text-danger fw-bold">@userAnswer</span>
+                                </p>
+                                <p>
+                                    <strong>Đáp án đúng:</strong>
+                                    <span class="text-success fw-bold">@correctAnswer</span>
+                                </p>
+                            }
+                            else
+                            {
+                                <p class="mt-2">
+                                    <strong>Output của bạn:</strong>
+                                    <pre class="bg-light p-2 rounded text-danger">@userOutput</pre>
+                                </p>
+                                <p>
+                                    <strong>Output mong đợi:</strong>
+                                    <pre class="bg-light p-2 rounded text-success">@expectedOutput</pre>
+                                </p>
+                            }
                         }
 
                         <div class="mt-2 text-muted">
-                            <small><i>Loại câu hỏi: @(question.QuestionType == "MultipleChoice" ? "Trắc nghiệm" : "Viết mã")</i></small>
+                            <small><i>Loại câu hỏi: @(questionType == "MultipleChoice" ? "Trắc nghiệm" : "Viết mã")</i></small>
                         </div>
                     </div>
                 </div>
@@ -84,7 +111,5 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

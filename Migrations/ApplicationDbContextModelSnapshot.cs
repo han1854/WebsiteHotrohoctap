@@ -249,13 +249,10 @@ namespace WebsiteHotrohoctap.Migrations
                     b.Property<int>("ExamID")
                         .HasColumnType("int");
 
-                    b.Property<string>("ExpectedOutput")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Language")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Options")
+                    b.Property<string>("OptionsJson")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -271,11 +268,13 @@ namespace WebsiteHotrohoctap.Migrations
                     b.Property<string>("SampleInput")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SelectedAnswer")
-                        .IsRequired()
+                    b.Property<string>("SampleOutput")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StarterCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ExamContentID");

@@ -4,7 +4,7 @@
     ViewData["Title"] = "Cập nhật bài kiểm tra";
 }
 
-<h2 class="text-center">Cập nhật bài kiểm tra</h2>
+<h2 class="text-center">Cập nhật thông tin bài tập</h2>
 
 <div class="row justify-content-center">
     <div class="col-md-6">
@@ -16,7 +16,7 @@
 
             <!-- Tên bài kiểm tra -->
             <div class="form-group mb-3">
-                <label asp-for="ExamName" class="control-label">Tên bài kiểm tra</label>
+                <label asp-for="ExamName" class="control-label">Tên bài</label>
                 <input asp-for="ExamName" class="form-control" placeholder="Nhập tên bài kiểm tra" />
                 <span asp-validation-for="ExamName" class="text-danger"></span>
             </div>
@@ -46,14 +46,14 @@
 
             <!-- Nút submit -->
             <div class="form-group">
-                <button type="submit" class="btn btn-success w-100 btn-lg rounded-pill shadow-sm">Cập nhật bài kiểm tra</button>
+                <button type="submit" class="btn btn-success w-100 btn-lg rounded-pill shadow-sm">Cập nhật bài tập</button>
             </div>
         </form>
     </div>
 </div>
 
 <div class="text-center mt-3">
-    <a asp-action="Index" class="btn btn-link">Quay lại danh sách bài kiểm tra</a>
+    <a asp-action="Index" class="btn btn-link">Quay lại danh sách bài tập</a>
 </div>
 
 @section Scripts {

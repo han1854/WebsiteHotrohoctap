@@ -143,27 +143,106 @@ namespace WebsiteHotrohoctap.Controllers
             return View(lessoncontent);
         }
         [Authorize(Roles = SD.Role_Admin)]
+        public async Task<IActionResult> Update(int id)
+        {
+            var lessoncontent = await _lessoncontentRepository.GetByIdAsync(id);
+            if (lessoncontent == null)
+            {
+                return NotFound();
+            }
+
+            var lessons = await _lessonRepository.GetAllAsync();
+            ViewBag.Lessons = new SelectList(lessons, "LessonID", "LessonName");
+
+            return View(lessoncontent);
+        }
+
+        [Authorize(Roles = SD.Role_Admin)]
         [HttpPost]
-        public async Task<IActionResult> Update(int id, LessonContent lessoncontent)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Update(int id, LessonContent lessoncontent, IFormFile? ImageFile, IFormFile? VideoFile, string? VideoUrl, string? TextContent)
         {
             if (id != lessoncontent.ContentID)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (lessoncontent.ContentType == "text")
             {
-                var existingLessonContent = await _lessoncontentRepository.GetByIdAsync(id);
-                existingLessonContent.ContentType = lessoncontent.ContentType;
-                existingLessonContent.ContentData = lessoncontent.ContentData;
-                existingLessonContent.LessonID = lessoncontent.LessonID;
-                await _lessoncontentRepository.UpdateAsync(existingLessonContent);
-                return RedirectToAction(nameof(Index));
+                if (string.IsNullOrWhiteSpace(TextContent))
+                {
+                    ModelState.AddModelError("TextContent", "Nhập nội dung văn bản.");
+                }
+                else
+                {
+                    lessoncontent.ContentData = TextContent;
+                }
             }
-            var lessons = await _lessonRepository.GetAllAsync();
-            ViewBag.Lessons = new SelectList(lessons, "LessonID", "LessonName");
-            return View(lessoncontent);
+            else if (lessoncontent.ContentType == "image")
+            {
+                if (ImageFile != null && ImageFile.Length > 0)
+                {
+                    // Xử lý ảnh mới
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(ImageFile.FileName);
+                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+                    Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ImageFile.CopyToAsync(stream);
+                    }
+                    lessoncontent.ContentData = "/images/" + fileName;
+                }
+                else if (string.IsNullOrEmpty(lessoncontent.ContentData))
+                {
+                    // Nếu không có ảnh mới và cũng không có ảnh cũ, yêu cầu chọn ảnh
+                    ModelState.AddModelError("ImageFile", "Chọn một file ảnh.");
+                }
+            }
+            else if (lessoncontent.ContentType == "video")
+            {
+                if (VideoFile != null && VideoFile.Length > 0)
+                {
+                    // Xử lý video mới
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(VideoFile.FileName);
+                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/videos", fileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await VideoFile.CopyToAsync(stream);
+                    }
+                    lessoncontent.ContentData = "/videos/" + fileName;
+                }
+                else if (!string.IsNullOrWhiteSpace(VideoUrl))
+                {
+                    // Nếu có link video, lưu lại URL
+                    lessoncontent.ContentData = VideoUrl;
+                }
+                else if (string.IsNullOrEmpty(lessoncontent.ContentData))
+                {
+                    // Nếu không có video mới và cũng không có video cũ, yêu cầu chọn video hoặc nhập URL
+                    ModelState.AddModelError("VideoFile", "Chọn file hoặc nhập link video.");
+                }
+            }
+
+            // Kiểm tra tính hợp lệ của ModelState
+            if (!ModelState.IsValid)
+            {
+                var lessons = await _lessonRepository.GetAllAsync();
+                ViewBag.Lessons = new SelectList(lessons, "LessonID", "LessonName");
+                return View(lessoncontent);
+            }
+
+            var existingLessonContent = await _lessoncontentRepository.GetByIdAsync(id);
+            existingLessonContent.ContentType = lessoncontent.ContentType;
+            existingLessonContent.ContentData = lessoncontent.ContentData;
+            existingLessonContent.LessonID = lessoncontent.LessonID;
+
+            // Cập nhật bài học
+            await _lessoncontentRepository.UpdateAsync(existingLessonContent);
+
+            return RedirectToAction(nameof(Index));
         }
+
 
         [Authorize(Roles = SD.Role_Admin)]
         public async Task<IActionResult> Delete(int id)

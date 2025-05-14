@@ -52,7 +52,7 @@
                         <td>@item.Lesson?.LessonName</td>
                         <td>
                             <div class="d-flex justify-content-center gap-2 flex-wrap">
-                                <a asp-action="Edit" asp-route-id="@item.ContentID" class="btn btn-sm btn-outline-warning rounded-pill">Sửa</a>
+                                <a asp-action="Update" asp-route-id="@item.ContentID" class="btn btn-sm btn-outline-warning rounded-pill">Sửa</a>
                                 <a asp-action="Details" asp-route-id="@item.ContentID" class="btn btn-sm btn-outline-info rounded-pill">Chi tiết</a>
                                 <a asp-action="Delete" asp-route-id="@item.ContentID" class="btn btn-sm btn-outline-danger rounded-pill">Xóa</a>
                             </div>

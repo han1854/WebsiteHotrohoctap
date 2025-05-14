@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebsiteHotrohoctap.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -172,6 +172,27 @@ namespace WebsiteHotrohoctap.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    MessageID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.MessageID);
+                    table.ForeignKey(
+                        name: "FK_Messages_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Enrollments",
                 columns: table => new
                 {
@@ -248,7 +269,7 @@ namespace WebsiteHotrohoctap.Migrations
                     ContentID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ContentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ContentData = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ContentData = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LessonID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -269,9 +290,15 @@ namespace WebsiteHotrohoctap.Migrations
                     ExamContentID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     QuestionType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    QuestionText = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CorrectAnswer = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ExamID = table.Column<int>(type: "int", nullable: false)
+                    QuestionText = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    CorrectAnswer = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExamID = table.Column<int>(type: "int", nullable: false),
+                    OptionsJson = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StarterCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SampleInput = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SampleOutput = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Language = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -290,10 +317,15 @@ namespace WebsiteHotrohoctap.Migrations
                 {
                     ResultID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ExamID = table.Column<int>(type: "int", nullable: false),
                     Score = table.Column<int>(type: "int", nullable: false),
                     ExamDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ExamID = table.Column<int>(type: "int", nullable: false)
+                    Answer = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Input = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Output = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -302,7 +334,8 @@ namespace WebsiteHotrohoctap.Migrations
                         name: "FK_ExamResults_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ExamResults_Exams_ExamID",
                         column: x => x.ExamID,
@@ -389,6 +422,11 @@ namespace WebsiteHotrohoctap.Migrations
                 name: "IX_Lessons_CourseID",
                 table: "Lessons",
                 column: "CourseID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_UserID",
+                table: "Messages",
+                column: "UserID");
         }
 
         /// <inheritdoc />
@@ -422,13 +460,16 @@ namespace WebsiteHotrohoctap.Migrations
                 name: "LessonContents");
 
             migrationBuilder.DropTable(
+                name: "Messages");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Exams");
 
             migrationBuilder.DropTable(
-                name: "Exams");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Lessons");

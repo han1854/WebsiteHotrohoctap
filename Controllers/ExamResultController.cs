@@ -19,135 +19,107 @@ namespace WebsiteHotrohoctap.Controllers
             _examRepository = examRepository;
             _examResultRepository = examResultRepository;
             _userManager = userManager;
-            _jdoodleService = jdoodleService; // Inject JDoodleService
+            _jdoodleService = jdoodleService;
         }
 
-        // Hiển thị bài thi cho người dùng làm
         public async Task<IActionResult> DoExam(int id)
         {
-            var exam = await _examRepository.GetExamWithContentsAsync(id); // Lấy bài thi và các câu hỏi liên quan
+            var exam = await _examRepository.GetExamWithContentsAsync(id);
             if (exam == null) return NotFound();
 
-            return View(exam); // Trả về view với bài thi và câu hỏi
+            return View(exam);
         }
 
-        // Xử lý kết quả khi người dùng nộp bài
         [HttpPost]
         public async Task<IActionResult> SubmitExam(int examId, List<string> answers, List<int> contentIds, List<string> codes)
         {
-            var exam = await _examRepository.GetExamWithContentsAsync(examId); // Lấy lại bài thi và các câu hỏi
+            var exam = await _examRepository.GetExamWithContentsAsync(examId);
             if (exam == null) return NotFound();
 
             int score = 0;
-            var userId = _userManager.GetUserId(User); // Lấy UserId của người dùng hiện tại
+            var userId = _userManager.GetUserId(User);
 
-            // Khởi tạo Input và Output
             var inputValues = new List<string>();
             var outputValues = new List<string>();
 
-            // Duyệt qua các câu hỏi và kiểm tra câu trả lời của người dùng
             for (int i = 0; i < contentIds.Count; i++)
             {
                 var question = exam.ExamContents.FirstOrDefault(x => x.ExamContentID == contentIds[i]);
                 if (question != null)
                 {
-                    // Kiểm tra câu hỏi trắc nghiệm
                     if (question.QuestionType == "MultipleChoice")
                     {
-                        // Kiểm tra đáp án trắc nghiệm của người dùng
-                        if (question.SelectedAnswer == answers[i])
+                        if (question.CorrectAnswer == answers[i])
                         {
-                            score++; // Tăng điểm nếu câu trả lời đúng
+                            score++;
                         }
                     }
-                    // Kiểm tra câu hỏi code
                     else if (question.QuestionType == "Code")
                     {
-                        var input = question.SampleInput; // Lấy input mẫu từ câu hỏi
-                        var expectedOutput = question.ExpectedOutput; // Lấy output mong đợi từ câu hỏi
+                        // Nếu không có ngôn ngữ trong câu hỏi, sử dụng mặc định là "cpp"
+                        string language = question.Language ?? "cpp";
+                        string output = await _jdoodleService.ExecuteCode(codes[i], language);
 
-                        inputValues.Add(input); // Lưu input mẫu
-                        outputValues.Add(expectedOutput); // Lưu output mong đợi
+                        inputValues.Add(question.SampleInput ?? "No input");
+                        outputValues.Add(output ?? "No output");
 
-                        // Chạy mã người dùng với input mẫu
-                        var output = await _jdoodleService.ExecuteCode(codes[i], question.Language); // Chạy mã người dùng nhập
-
-                        // Kiểm tra nếu có lỗi khi gọi dịch vụ JDoodle
-                        if (string.IsNullOrEmpty(output))
+                        // Kiểm tra kết quả từ JDoodle (có thể cần điều chỉnh logic so với yêu cầu bài thi)
+                        if (output != null && output.Trim() == question.CorrectAnswer)
                         {
-                            // Nếu không có kết quả trả về, cộng điểm 0 hoặc xử lý lỗi tương ứng
-                            output = "Error or no output received";
-                        }
-
-                        // So sánh kết quả trả về với output mong đợi
-                        if (output == expectedOutput)
-                        {
-                            score++; // Cộng điểm nếu kết quả đúng
+                            score++;
                         }
                     }
+
                 }
             }
 
-            // Tính điểm tỷ lệ (score / tổng số câu hỏi)
             var result = new ExamResult
             {
                 UserId = userId,
                 ExamID = examId,
                 ExamDate = DateTime.Now,
-                Score = (score * 100) / exam.ExamContents.Count, // Tính điểm theo tỷ lệ
-                Status = "Completed", // Trạng thái bài làm
-                Answer = string.Join(";", answers), // Lưu đáp án trắc nghiệm người dùng đã chọn
-                Code = string.Join(";", codes), // Lưu mã code người dùng nộp
-                Input = string.Join(";", inputValues), // Lưu input đầu vào
-                Output = string.Join(";", outputValues), // Lưu output
+                Score = (score * 100) / exam.ExamContents.Count,
+                Status = "Completed",
+                Answer = string.Join(";", answers),
+                Code = string.Join(";", codes),
+                Input = string.Join(";", inputValues),
+                Output = string.Join(";", outputValues),
             };
 
-            await _examResultRepository.AddAsync(result); // Lưu kết quả vào DB
+            await _examResultRepository.AddAsync(result);
 
-
-            // Chuyển đến trang kết quả bài thi
             return RedirectToAction("ResultDetails", new { id = result.ResultID });
         }
 
-        // Xem chi tiết kết quả bài thi của người dùng
         public async Task<IActionResult> ResultDetails(int id)
         {
             var result = await _examResultRepository.GetByIdAsync(id);
             if (result == null) return NotFound();
 
-            // Lấy bài thi từ cơ sở dữ liệu và gán vào kết quả thi
             var exam = await _examRepository.GetExamWithContentsAsync(result.ExamID);
             if (exam == null) return NotFound();
 
-            result.Exam = exam; // Gán bài thi vào kết quả thi
+            result.Exam = exam;
 
-            return View(result); // Trả về view với kết quả thi đã có bài thi kèm theo
+            return View(result);
         }
 
-        // Hiển thị danh sách kết quả thi của người dùng (Admin chỉ xem)
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var result = await _examResultRepository.GetAllAsync();
-            if (result == null)
-            {
-                return View();  // Trả về view nếu không có kết quả
-            }
-
-            return View(result);  // Đảm bảo rằng đối tượng result không null khi truyền vào view
+            return View(result);
         }
 
-        // Chỉnh sửa kết quả thi (Admin)
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id)
         {
             var result = await _examResultRepository.GetByIdAsync(id);
             if (result == null) return NotFound();
 
-            return View(result); // Hiển thị form chỉnh sửa kết quả thi
+            return View(result);
         }
 
-        // Xử lý khi Admin chỉnh sửa kết quả thi
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Update(int id, ExamResult result)
@@ -156,29 +128,28 @@ namespace WebsiteHotrohoctap.Controllers
 
             if (ModelState.IsValid)
             {
-                await _examResultRepository.UpdateAsync(result); // Lưu chỉnh sửa kết quả thi
-                return RedirectToAction(nameof(Index)); // Quay lại danh sách kết quả
+                await _examResultRepository.UpdateAsync(result);
+                return RedirectToAction(nameof(Index));
             }
 
-            return View(result); // Nếu có lỗi, quay lại form chỉnh sửa
+            return View(result);
         }
 
-        // Xóa kết quả thi (Admin)
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _examResultRepository.GetByIdAsync(id);
             if (result == null) return NotFound();
 
-            return View(result); // Hiển thị xác nhận xóa kết quả
+            return View(result);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("DeleteConfirmed")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _examResultRepository.DeleteAsync(id); // Xóa kết quả thi
-            return RedirectToAction(nameof(Index)); // Quay lại danh sách kết quả
+            await _examResultRepository.DeleteAsync(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

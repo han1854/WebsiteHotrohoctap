@@ -38,15 +38,17 @@ namespace WebsiteHotrohoctap.Services
             try
             {
                 var response = await _httpClient.PostAsync("https://api.jdoodle.com/v1/execute", content);
-                if (!response.IsSuccessStatusCode)
-                {
-                    return $"Error: Không thể kết nối JDoodle. Status Code: {response.StatusCode}";
-                }
+                response.EnsureSuccessStatusCode();  // Throw exception if not successful
 
                 var responseString = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<JDoodleResult>(responseString);
 
-                if (result != null && !string.IsNullOrEmpty(result.output))
+                if (result == null)
+                {
+                    return "Lỗi: Không thể giải mã kết quả từ JDoodle.";
+                }
+
+                if (!string.IsNullOrEmpty(result.output))
                 {
                     return result.output.Trim();
                 }
@@ -55,9 +57,17 @@ namespace WebsiteHotrohoctap.Services
                     return "Không có kết quả từ JDoodle.";
                 }
             }
+            catch (HttpRequestException httpEx)
+            {
+                return $"Lỗi kết nối JDoodle: {httpEx.Message}";
+            }
+            catch (JsonException jsonEx)
+            {
+                return $"Lỗi khi giải mã kết quả từ JDoodle: {jsonEx.Message}";
+            }
             catch (Exception ex)
             {
-                return $"Lỗi khi kết nối JDoodle: {ex.Message}";
+                return $"Lỗi không xác định: {ex.Message}";
             }
         }
     }
