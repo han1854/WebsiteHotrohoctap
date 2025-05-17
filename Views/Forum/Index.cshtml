@@ -4,6 +4,166 @@
     ViewData["Title"] = "Diễn Đàn";
 }
 
+<!-- Thêm CSS trực tiếp vào trang -->
+<style>
+    /* Tổng thể container của chat */
+    .chat-container {
+        max-width: 900px;
+        margin: 30px auto;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+
+    /* Khu vực hiển thị tin nhắn */
+    .chat-messages {
+        max-height: 500px;
+        overflow-y: auto;
+        padding: 15px;
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+        /* Thanh cuộn tùy chỉnh */
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background-color: #888;
+            border-radius: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+    /* Tin nhắn */
+    .message {
+        display: flex;
+        margin-bottom: 15px;
+    }
+
+    .message-left {
+        justify-content: flex-start;
+    }
+
+    .message-right {
+        justify-content: flex-end;
+    }
+
+    .message-content {
+        max-width: 70%;
+        padding: 10px 15px;
+        border-radius: 15px;
+        position: relative;
+    }
+
+    .message-left .message-content {
+        background-color: #e9ecef;
+        border-bottom-left-radius: 0;
+    }
+
+    .message-right .message-content {
+        background-color: #007bff;
+        color: white;
+        border-bottom-right-radius: 0;
+    }
+
+    /* Header của tin nhắn (tên người dùng và thời gian) */
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9em;
+        margin-bottom: 5px;
+    }
+
+        .message-header strong {
+            color: #333;
+        }
+
+    .message-right .message-header strong {
+        color: white;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+
+    .message-right .text-muted {
+        color: #d1e7ff !important;
+    }
+
+    /* Nội dung tin nhắn */
+    .message-body {
+        word-wrap: break-word;
+        font-size: 1em;
+    }
+
+    /* Khu vực nhập tin nhắn */
+    .chat-input {
+        display: flex;
+        align-items: center;
+        background-color: #fff;
+        padding: 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+    }
+
+        .chat-input .form-group {
+            width: 100%;
+            margin: 0;
+        }
+
+        .chat-input .form-control {
+            border: none;
+            box-shadow: none;
+            border-radius: 20px;
+            padding: 10px 15px;
+            background-color: #f1f1f1;
+        }
+
+            .chat-input .form-control:focus {
+                outline: none;
+                background-color: #e8e8e8;
+            }
+
+        .chat-input .btn-primary {
+            border-radius: 20px;
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #007bff;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+            .chat-input .btn-primary:hover {
+                background-color: #0056b3;
+            }
+
+    /* Thông báo đăng nhập */
+    .text-muted a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+        .text-muted a:hover {
+            text-decoration: underline;
+        }
+
+    /* Tiêu đề */
+    h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+        font-weight: 700;
+    }
+</style>
+
 <h1>Diễn Đàn</h1>
 
 <div class="chat-container">
@@ -14,7 +174,6 @@
             <div class="message @(isCurrentUser ? "message-right" : "message-left")">
                 <div class="message-content">
                     <div class="message-header">
-                        
                         <div>
                             <strong>@message.User.UserName</strong>
                             <span class="text-muted">@message.Timestamp.ToString("dd/MM/yyyy HH:mm")</span>
@@ -61,7 +220,6 @@
             msgDiv.innerHTML = `
                 <div class="message-content">
                     <div class="message-header">
-                        
                         <div>
                             <strong>${user}</strong>
                             <span class="text-muted">(${new Date().toLocaleString("vi-VN")})</span>

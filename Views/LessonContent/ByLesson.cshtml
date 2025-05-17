@@ -1,37 +1,82 @@
 @model WebsiteHotrohoctap.Models.Lesson
 
-<div class="lesson-container">
-    <h1>@Model.LessonName</h1>
-    <p><strong>Mô tả:</strong> @Model.LessonDescription</p>
+<div class="container-fluid vh-100 overflow-hidden p-0">
+    <div class="bg-white h-100 p-4">
 
-    <!-- Hiển thị nội dung lý thuyết -->
-    <div class="theory-section">
-        @if (Model.LessonContents != null && Model.LessonContents.Any(c => c.ContentType == "Text"))
-        {
-            @foreach (var content in Model.LessonContents.Where(c => c.ContentType == "Text"))
-            {
-                @Html.Raw(content.ContentData)
-            }
-        }
-        else
-        {
-            <p>Không có nội dung lý thuyết.</p>
-        }
-    </div>
+        <!-- Tiêu đề -->
+        <h1 class="text-center text-primary fw-bold mb-4" style="font-size: 2.2rem;">
+            @Model.LessonName
+        </h1>
 
-    <!-- Hiển thị video -->
-    <div class="video-section">
-        <h2>Video bài giảng</h2>
-        @if (Model.LessonContents != null && Model.LessonContents.Any(c => c.ContentType == "Video"))
-        {
-            @foreach (var content in Model.LessonContents.Where(c => c.ContentType == "Video"))
-            {
-                <iframe src="@content.ContentData" allowfullscreen></iframe>
-            }
-        }
-        else
-        {
-            <p>Không có video hướng dẫn.</p>
-        }
+        <!-- Mô tả -->
+        <p class="text-center text-muted mb-5" style="font-size: 1.2rem;">
+            <strong>Mô tả:</strong> @Model.LessonDescription
+        </p>
+
+        <!-- Bố cục 2 cột: lý thuyết cuộn, video đứng im -->
+        <div class="row h-100">
+            <!-- Lý thuyết bên trái -->
+            <div class="col-6 pe-3" style="max-height: calc(100vh - 200px); overflow-y: auto;">
+                <h4 class="text-dark border-bottom pb-2 mb-3">📘 Nội dung lý thuyết</h4>
+                @if (Model.LessonContents != null && Model.LessonContents.Any(c => c.ContentType == "Text"))
+                {
+                    @foreach (var content in Model.LessonContents.Where(c => c.ContentType == "Text"))
+                    {
+                        <div class="mb-4 content-text fs-5 lh-lg">
+                            @Html.Raw(content.ContentData)
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="fst-italic text-muted">Không có nội dung lý thuyết.</p>
+                }
+            </div>
+
+            <!-- Video bên phải, cố định -->
+            <div class="col-6">
+                <div class="sticky-top" style="top: 100px;">
+                    <h4 class="text-dark border-bottom pb-2 mb-3">🎥 Video bài giảng</h4>
+                    @if (Model.LessonContents != null && Model.LessonContents.Any(c => c.ContentType == "Video"))
+                    {
+                        @foreach (var content in Model.LessonContents.Where(c => c.ContentType == "Video"))
+                        {
+                            <div class="ratio ratio-16x9 mb-4 shadow-sm rounded">
+                                <iframe src="@content.ContentData" allowfullscreen class="rounded w-100 h-100"></iframe>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="fst-italic text-muted">Không có video hướng dẫn.</p>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+
+    .content-text {
+        font-size: 1.25rem;
+        line-height: 1.9;
+        text-align: justify;
+    }
+
+        .content-text img {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+    iframe {
+        border: none;
+    }
+</style>
