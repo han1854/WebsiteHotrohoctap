@@ -22,9 +22,7 @@
                 <!-- Thông tin câu hỏi -->
                 <dl class="row mb-4">
                     <dt class="col-sm-4 fw-semibold">Loại câu hỏi</dt>
-                    <dd class="col-sm-8">
-                        @(Model.QuestionType == "MultipleChoice" ? "Trắc nghiệm" : "Viết mã lệnh")
-                    </dd>
+                    <dd class="col-sm-8">Viết mã lệnh</dd>
 
                     <dt class="col-sm-4 fw-semibold">Nội dung câu hỏi</dt>
                     <dd class="col-sm-8">@Model.QuestionText</dd>
@@ -38,7 +36,6 @@
                     <input type="submit" value="Xóa câu hỏi" class="btn btn-outline-danger btn-lg rounded-pill px-4 fw-semibold shadow-sm me-2" />
                     <a asp-action="Index" class="btn btn-outline-secondary btn-lg rounded-pill px-4 fw-semibold">Quay lại</a>
                 </form>
-
             </div>
         </div>
     </div>

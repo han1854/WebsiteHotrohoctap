@@ -56,5 +56,11 @@ namespace WebsiteHotrohoctap.Repositories
                 .Where(ec => ec.ExamID == examId)
                 .ToListAsync();
         }
+        public async Task AddExamResultAsync(ExamResult result)
+        {
+            _context.ExamResults.Add(result);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

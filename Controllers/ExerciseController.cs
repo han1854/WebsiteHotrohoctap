@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -220,10 +221,9 @@ namespace WebsiteHotrohoctap.Controllers
                         status = "Runtime Error";
                         _logger.LogWarning("JDoodle API returned error: {Error}", result.output);
                         allOutputs += result.output + "\n";
-                        continue; // Tiếp tục với test case tiếp theo
+                        continue;
                     }
 
-                    // So sánh output với đáp án đúng
                     string actualOutput = result.output?.Trim();
                     string expectedOutput = testCase.CorrectAnswer?.Trim();
                     allInputs += testCase.QuestionText + "\n";
@@ -240,19 +240,21 @@ namespace WebsiteHotrohoctap.Controllers
                 }
 
                 // Tính điểm theo cơ chế LeetCode
-                int totalMarks = exam.TotalMarks; // Giả sử TotalMarks = 100
+                int totalMarks = exam.TotalMarks;
                 int score = (passedTestCases * totalMarks) / totalTestCases;
                 if (status == "Runtime Error" || status == "Wrong Answer")
                 {
-                    score = (passedTestCases * totalMarks) / totalTestCases; // Điểm dựa trên test case đúng
+                    score = (passedTestCases * totalMarks) / totalTestCases;
                 }
 
-                // Lưu kết quả vào ExamResults
-                var userId = int.Parse(User.Identity.Name); // Giả sử UserId lấy từ tên đăng nhập, cần điều chỉnh
+                // Lấy UserId từ thông tin người dùng
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.Identity.Name;
+
+                // Tạo và lưu ExamResult
                 var examResult = new ExamResult
                 {
                     ExamID = examId,
-                    UserId = userId.ToString(),
+                    UserId = userId,
                     Score = score,
                     ExamDate = DateTime.Now,
                     Status = status,
@@ -261,10 +263,14 @@ namespace WebsiteHotrohoctap.Controllers
                     Output = allOutputs.Trim()
                 };
 
-                await _examRepository.AddExamAsync(exam);
+                await _examRepository.AddExamResultAsync(examResult); // Lưu ExamResult vào cơ sở dữ liệu
 
-                _logger.LogInformation("SubmitCode successful, score: {Score}, status: {Status}", score, status);
-                return Json(new { success = true, score = score, status = status, passed = passedTestCases, total = totalTestCases });
+                // Kiểm tra và hiển thị thông báo đã hoàn thành (giống LeetCode)
+                bool isCompleted = status == "Accepted" && passedTestCases == totalTestCases; // Hoàn thành nếu tất cả test case đều đúng
+                string completionMessage = isCompleted ? "Bài tập đã được hoàn thành!" : "Bài tập chưa hoàn thành.";
+
+                _logger.LogInformation("SubmitCode successful, score: {Score}, status: {Status}, completed: {Completed}", score, status, isCompleted);
+                return Json(new { success = true, score = score, status = status, passed = passedTestCases, total = totalTestCases, message = completionMessage });
             }
             catch (Exception ex)
             {
@@ -274,8 +280,8 @@ namespace WebsiteHotrohoctap.Controllers
         }
     }
 
-    // Định nghĩa lớp mô hình cho phản hồi của JDoodle API
-    public class JDoodleResponse
+        // Định nghĩa lớp mô hình cho phản hồi của JDoodle API
+        public class JDoodleResponse
     {
         public string output { get; set; }
         public int statusCode { get; set; }

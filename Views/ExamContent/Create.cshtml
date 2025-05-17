@@ -12,13 +12,10 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <!-- Loại câu hỏi -->
+            <input type="hidden" asp-for="QuestionType" value="Code" />
             <div class="form-group mb-3">
-                <label asp-for="QuestionType" class="control-label">Loại câu hỏi</label>
-                <select asp-for="QuestionType" class="form-select" id="questionTypeSelect">
-                    <option value="MultipleChoice">Trắc nghiệm</option>
-                    <option value="Code">Viết mã lệnh</option>
-                </select>
-                <span asp-validation-for="QuestionType" class="text-danger"></span>
+                <label class="control-label">Loại câu hỏi</label>
+                <input type="text" class="form-control" value="Viết mã lệnh" readonly />
             </div>
 
             <!-- Nội dung câu hỏi -->
@@ -28,52 +25,34 @@
                 <span asp-validation-for="QuestionText" class="text-danger"></span>
             </div>
 
-            <!-- Các lựa chọn cho Multiple Choice -->
-            <div id="multipleChoiceOptions" style="display:none;">
-                @for (int i = 0; i < 4; i++)
-                {
-                    <div class="form-group mb-3">
-                        <label class="control-label">Đáp án @(i + 1)</label>
-                        <div class="input-group">
-                            <div class="input-group-text">
-                                <input type="radio" name="SelectedAnswer" value="@(Model.Options != null && Model.Options.Count > i ? Model.Options[i] : "")" class="option-radio" data-index="@i" @(Model.SelectedAnswer == Model.Options[i] ? "checked" : "") />
-                            </div>
-                            <input type="text" class="form-control option-text" name="Options[@i]" value="@(Model.Options != null && Model.Options.Count > i ? Model.Options[i] : "")" data-index="@i" />
-                        </div>
-                    </div>
-                }
+            <!-- Code Options -->
+            <div class="form-group mb-3">
+                <label asp-for="Language" class="control-label">Ngôn ngữ lập trình</label>
+                <select asp-for="Language" class="form-select">
+                    <option value="python3">Python 3</option>
+                    <option value="java">Java</option>
+                    <option value="cpp">C++</option>
+                    <option value="csharp">C#</option>
+                </select>
+                <span asp-validation-for="Language" class="text-danger"></span>
             </div>
 
-            <!-- Code Options -->
-            <div id="codeOptions" style="display: none;">
-                <div class="form-group mb-3">
-                    <label asp-for="Language" class="control-label">Ngôn ngữ lập trình</label>
-                    <select asp-for="Language" class="form-select">
-                        <option value="python3">Python 3</option>
-                        <option value="java">Java</option>
-                        <option value="cpp">C++</option>
-                        <option value="csharp">C#</option>
-                    </select>
-                    <span asp-validation-for="Language" class="text-danger"></span>
-                </div>
+            <div class="form-group mb-3">
+                <label asp-for="StarterCode" class="control-label">Code mẫu (nếu có)</label>
+                <textarea asp-for="StarterCode" class="form-control" rows="6">@Model.StarterCode</textarea>
+                <span asp-validation-for="StarterCode" class="text-danger"></span>
+            </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="StarterCode" class="control-label">Code mẫu (nếu có)</label>
-                    <textarea asp-for="StarterCode" class="form-control" rows="6">@Model.StarterCode</textarea>
-                    <span asp-validation-for="StarterCode" class="text-danger"></span>
-                </div>
+            <div class="form-group mb-3">
+                <label asp-for="SampleInput" class="control-label">Input mẫu (nếu có)</label>
+                <textarea asp-for="SampleInput" class="form-control" rows="3">@Model.SampleInput</textarea>
+                <span asp-validation-for="SampleInput" class="text-danger"></span>
+            </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="SampleInput" class="control-label">Input mẫu (nếu có)</label>
-                    <textarea asp-for="SampleInput" class="form-control" rows="3">@Model.SampleInput</textarea>
-                    <span asp-validation-for="SampleInput" class="text-danger"></span>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="ExpectedOutput" class="control-label">Output mong đợi</label>
-                    <textarea asp-for="ExpectedOutput" class="form-control" rows="3">@Model.ExpectedOutput</textarea>
-                    <span asp-validation-for="ExpectedOutput" class="text-danger"></span>
-                </div>
+            <div class="form-group mb-3">
+                <label asp-for="ExpectedOutput" class="control-label">Output mong đợi</label>
+                <textarea asp-for="ExpectedOutput" class="form-control" rows="3">@Model.ExpectedOutput</textarea>
+                <span asp-validation-for="ExpectedOutput" class="text-danger"></span>
             </div>
 
             <!-- ExamID -->
@@ -85,9 +64,6 @@
                 <span asp-validation-for="ExamID" class="text-danger"></span>
             </div>
 
-            <!-- Hidden SelectedAnswer -->
-            <input type="hidden" name="SelectedAnswer" id="SelectedAnswer" />
-
             <!-- Submit -->
             <div class="form-group">
                 <button type="submit" class="btn btn-primary w-100">Tạo câu hỏi</button>
@@ -98,52 +74,4 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
-
-    <script>
-        const questionTypeSelect = document.getElementById('questionTypeSelect');
-        const multipleChoiceOptions = document.getElementById('multipleChoiceOptions');
-        const codeOptions = document.getElementById('codeOptions');
-
-        // Function to update the form based on selected QuestionType
-        function updateForm() {
-            // Check if the selected QuestionType is MultipleChoice or Code
-            if (questionTypeSelect.value === 'MultipleChoice') {
-                multipleChoiceOptions.style.display = 'block';
-                codeOptions.style.display = 'none';
-            } else if (questionTypeSelect.value === 'Code') {
-                multipleChoiceOptions.style.display = 'none';
-                codeOptions.style.display = 'block';
-            }
-        }
-
-        // Add event listener to update form when user changes QuestionType
-        questionTypeSelect.addEventListener('change', updateForm);
-
-        // Ensure the form is updated when page loads (this handles the initial display based on model value)
-        document.addEventListener('DOMContentLoaded', function () {
-            updateForm(); // Update form based on initial selected value of QuestionType
-        });
-
-        // Update SelectedAnswer when radio button is changed
-        document.querySelectorAll('.option-radio').forEach(function (radio) {
-            radio.addEventListener('change', function () {
-                document.getElementById('SelectedAnswer').value = this.value;
-            });
-        });
-
-        // Update radio value when input text changes
-        document.querySelectorAll('.option-text').forEach(function (input) {
-            input.addEventListener('input', function () {
-                const index = this.getAttribute('data-index');
-                const radio = document.querySelector(`input.option-radio[data-index="${index}"]`);
-                if (radio) {
-                    radio.value = this.value;
-                    if (radio.checked) {
-                        document.getElementById('SelectedAnswer').value = this.value;
-                    }
-                }
-            });
-        });
-    </script>
 }
-

@@ -11,75 +11,41 @@
         <dl class="row">
             <!-- Loại câu hỏi -->
             <dt class="col-sm-3">Loại câu hỏi</dt>
-            <dd class="col-sm-9">
-                @(Model.QuestionType == "MultipleChoice" ? "Trắc nghiệm" : "Viết mã lệnh")
-            </dd>
+            <dd class="col-sm-9">Viết mã lệnh</dd>
 
             <!-- Nội dung câu hỏi -->
             <dt class="col-sm-3">Nội dung câu hỏi</dt>
             <dd class="col-sm-9">@Model.QuestionText</dd>
 
-            @if (Model.QuestionType == "MultipleChoice")
+            <!-- Ngôn ngữ lập trình -->
+            <dt class="col-sm-3">Ngôn ngữ lập trình</dt>
+            <dd class="col-sm-9">@Model.Language</dd>
+
+            <!-- Starter Code -->
+            @if (!string.IsNullOrWhiteSpace(Model.StarterCode))
             {
-                <!-- Các lựa chọn và đáp án đúng -->
-                <dt class="col-sm-3">Các lựa chọn</dt>
+                <dt class="col-sm-3">Starter Code</dt>
                 <dd class="col-sm-9">
-                    <ul class="list-group list-group-flush">
-                        @for (int i = 0; i < (Model.Options?.Count ?? 0); i++)
-                        {
-                            var isCorrect = Model.Options[i] == Model.SelectedAnswer;
-                            <li class="list-group-item @(isCorrect ? "list-group-item-success" : "")">
-                                <strong>@(i + 1).</strong> @Model.Options[i]
-                                @if (isCorrect)
-                                {
-                                    <span class="badge bg-success ms-2">Đáp án đúng</span>
-                                }
-                            </li>
-                        }
-                    </ul>
+                    <pre class="bg-light p-3 rounded">@Model.StarterCode</pre>
                 </dd>
             }
-            else if (Model.QuestionType == "Code")
+
+            <!-- Input mẫu -->
+            @if (!string.IsNullOrWhiteSpace(Model.SampleInput))
             {
-                <!-- Ngôn ngữ lập trình -->
-                <dt class="col-sm-3">Ngôn ngữ lập trình</dt>
-                <dd class="col-sm-9">@Model.Language</dd>
+                <dt class="col-sm-3">Input mẫu</dt>
+                <dd class="col-sm-9">
+                    <pre class="bg-light p-3 rounded">@Model.SampleInput</pre>
+                </dd>
+            }
 
-                <!-- Starter Code -->
-                @if (!string.IsNullOrWhiteSpace(Model.StarterCode))
-                {
-                    <dt class="col-sm-3">Starter Code</dt>
-                    <dd class="col-sm-9">
-                        <pre class="bg-light p-3 rounded">@Model.StarterCode</pre>
-                    </dd>
-                }
-
-                <!-- Input mẫu -->
-                @if (!string.IsNullOrWhiteSpace(Model.SampleInput))
-                {
-                    <dt class="col-sm-3">Input mẫu</dt>
-                    <dd class="col-sm-9">
-                        <pre class="bg-light p-3 rounded">@Model.SampleInput</pre>
-                    </dd>
-                }
-
-                <!-- Output mong đợi -->
-                @if (!string.IsNullOrWhiteSpace(Model.ExpectedOutput))
-                {
-                    <dt class="col-sm-3">Output mong đợi</dt>
-                    <dd class="col-sm-9">
-                        <pre class="bg-light p-3 rounded">@Model.ExpectedOutput</pre>
-                    </dd>
-                }
-
-                <!-- Đáp án mẫu -->
-                @if (!string.IsNullOrWhiteSpace(Model.CorrectAnswer))
-                {
-                    <dt class="col-sm-3">Đáp án mẫu</dt>
-                    <dd class="col-sm-9">
-                        <pre class="bg-light p-3 rounded">@Model.CorrectAnswer</pre>
-                    </dd>
-                }
+            <!-- Output mong đợi -->
+            @if (!string.IsNullOrWhiteSpace(Model.ExpectedOutput))
+            {
+                <dt class="col-sm-3">Output mong đợi</dt>
+                <dd class="col-sm-9">
+                    <pre class="bg-light p-3 rounded">@Model.ExpectedOutput</pre>
+                </dd>
             }
 
             <!-- Thuộc bài kiểm tra -->

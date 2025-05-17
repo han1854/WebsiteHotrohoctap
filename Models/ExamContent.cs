@@ -25,10 +25,5 @@ namespace WebsiteHotrohoctap.Models
         public string? SampleInput { get; set; }
         public string? ExpectedOutput { get; set; }
 
-        // --------- Thêm cho dạng Trắc nghiệm ----------
-        public List<string> Options { get; set; } = new List<string>();
-
-        [Required(ErrorMessage = "Vui lòng chọn đáp án đúng.")]
-        public string SelectedAnswer { get; set; }
     }
 }

@@ -11,5 +11,6 @@ namespace WebsiteHotrohoctap.Repositories
         Task UpdateAsync(Exam exam);
         Task DeleteAsync(int id);
         Task<IEnumerable<ExamContent>> GetTestCasesAsync(int examId);
+        Task AddExamResultAsync(ExamResult result);
     }
 }

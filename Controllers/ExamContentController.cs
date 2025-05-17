@@ -1,7 +1,7 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Threading.Tasks;
 using WebsiteHotrohoctap.Models;
 using WebsiteHotrohoctap.Repositories;
 using WebsiteHotrohoctap.Services;
@@ -29,13 +29,7 @@ namespace WebsiteHotrohoctap.Controllers
         public async Task<IActionResult> Create()
         {
             await LoadExamsAsync();
-
-            var model = new ExamContent
-            {
-                Options = new List<string> { "", "", "", "" }
-            };
-
-            return View(model);
+            return View(new ExamContent());
         }
 
         [Authorize(Roles = SD.Role_Admin)]
@@ -45,19 +39,8 @@ namespace WebsiteHotrohoctap.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Kiểm tra câu hỏi trắc nghiệm
-                if (examcontent.QuestionType == "MultipleChoice")
-                {
-                    if (examcontent.Options == null || examcontent.Options.Count < 4 || examcontent.Options.Any(opt => string.IsNullOrWhiteSpace(opt)))
-                    {
-                        ModelState.AddModelError(string.Empty, "Vui lòng nhập đầy đủ 4 đáp án.");
-                        await LoadExamsAsync();
-                        return View(examcontent);
-                    }
-                    examcontent.CorrectAnswer = examcontent.SelectedAnswer;
-                }
-                // Kiểm tra câu hỏi lập trình
-                else if (examcontent.QuestionType == "Code")
+                // Chỉ xử lý câu hỏi lập trình (Code)
+                if (examcontent.QuestionType == "Code")
                 {
                     if (string.IsNullOrWhiteSpace(examcontent.StarterCode))
                     {
@@ -71,9 +54,13 @@ namespace WebsiteHotrohoctap.Controllers
                         await LoadExamsAsync();
                         return View(examcontent);
                     }
-
-                    // Đảm bảo đáp án đúng (cho Code) là null, vì không cần phải có đáp án đúng khi làm bài Code.
-                    examcontent.CorrectAnswer = null;
+                    examcontent.CorrectAnswer = null; // Không cần đáp án đúng cho câu hỏi Code
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Chỉ hỗ trợ loại câu hỏi lập trình (Code).");
+                    await LoadExamsAsync();
+                    return View(examcontent);
                 }
 
                 // Lưu vào Database
@@ -81,12 +68,9 @@ namespace WebsiteHotrohoctap.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Trả lại danh sách Exams nếu có lỗi
             await LoadExamsAsync();
             return View(examcontent);
         }
-
-
 
         private async Task LoadExamsAsync()
         {
@@ -130,37 +114,28 @@ namespace WebsiteHotrohoctap.Controllers
             {
                 var existingExamContent = await _examcontentRepository.GetByIdAsync(id);
 
-                // Cập nhật các trường
                 existingExamContent.QuestionType = examcontent.QuestionType;
                 existingExamContent.QuestionText = examcontent.QuestionText;
-                existingExamContent.Options = examcontent.Options;
-                existingExamContent.SelectedAnswer = examcontent.SelectedAnswer;
+                existingExamContent.CorrectAnswer = examcontent.CorrectAnswer;
+                existingExamContent.Language = examcontent.Language;
                 existingExamContent.StarterCode = examcontent.StarterCode;
                 existingExamContent.SampleInput = examcontent.SampleInput;
                 existingExamContent.ExpectedOutput = examcontent.ExpectedOutput;
-                existingExamContent.Language = examcontent.Language;
                 existingExamContent.ExamID = examcontent.ExamID;
 
-                // Xử lý lại đáp án đúng
-                if (examcontent.QuestionType == "MultipleChoice")
+                // Xử lý câu hỏi Code
+                if (existingExamContent.QuestionType == "Code")
                 {
-                    existingExamContent.CorrectAnswer = examcontent.SelectedAnswer;
-                }
-                else if (examcontent.QuestionType == "Code")
-                {
-                    // Không có cần gán SelectedAnswer cho câu hỏi code
-                    existingExamContent.CorrectAnswer = null;
+                    existingExamContent.CorrectAnswer = null; // Không cần đáp án đúng
                 }
 
                 await _examcontentRepository.UpdateAsync(existingExamContent);
                 return RedirectToAction(nameof(Index));
             }
 
-            // Trả lại danh sách Exams nếu có lỗi
             await LoadExamsAsync();
             return View(examcontent);
         }
-
 
         [Authorize(Roles = SD.Role_Admin)]
         public async Task<IActionResult> Delete(int id)

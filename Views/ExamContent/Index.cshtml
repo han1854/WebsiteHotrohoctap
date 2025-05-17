@@ -18,7 +18,7 @@
                 <tr>
                     <th>Loại câu hỏi</th>
                     <th class="text-start">Nội dung</th>
-                    <th class="text-start">Đáp án/Code mẫu</th>
+                    <th class="text-start">Code mẫu</th>
                     <th>Thuộc bài kiểm tra</th>
                     <th>Thao tác</th>
                 </tr>
@@ -27,22 +27,20 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td class="text-center">
-                            @(item.QuestionType == "MultipleChoice" ? "Trắc nghiệm" : "Viết mã")
-                        </td>
+                        <td class="text-center">Viết mã</td>
 
                         <td class="text-start" style="max-width: 400px; word-break: break-word;">
                             @item.QuestionText
                         </td>
 
                         <td class="text-start" style="max-width: 400px; white-space: pre-wrap;">
-                            @if (item.QuestionType == "MultipleChoice")
-                            {
-                                <span>@item.SelectedAnswer</span>
-                            }
-                            else if (item.QuestionType == "Code")
+                            @if (!string.IsNullOrWhiteSpace(item.StarterCode))
                             {
                                 <pre class="bg-light p-2 rounded small">@item.StarterCode</pre>
+                            }
+                            else
+                            {
+                                <span>Không có code mẫu</span>
                             }
                         </td>
 

@@ -33,7 +33,7 @@ namespace WebsiteHotrohoctap.Controllers
 
         // Xử lý kết quả khi người dùng nộp bài
         [HttpPost]
-        public async Task<IActionResult> SubmitExam(int examId, List<string> answers, List<int> contentIds, List<string> codes)
+        public async Task<IActionResult> SubmitExam(int examId, List<string> codes)
         {
             var exam = await _examRepository.GetExamWithContentsAsync(examId); // Lấy lại bài thi và các câu hỏi
             if (exam == null) return NotFound();
@@ -45,45 +45,31 @@ namespace WebsiteHotrohoctap.Controllers
             var inputValues = new List<string>();
             var outputValues = new List<string>();
 
-            // Duyệt qua các câu hỏi và kiểm tra câu trả lời của người dùng
-            for (int i = 0; i < contentIds.Count; i++)
+            // Duyệt qua các câu hỏi và kiểm tra mã code của người dùng
+            for (int i = 0; i < exam.ExamContents.Count; i++)
             {
-                var question = exam.ExamContents.FirstOrDefault(x => x.ExamContentID == contentIds[i]);
-                if (question != null)
+                var question = exam.ExamContents[i];
+                if (question != null && question.QuestionType == "Code")
                 {
-                    // Kiểm tra câu hỏi trắc nghiệm
-                    if (question.QuestionType == "MultipleChoice")
+                    var input = question.SampleInput; // Lấy input mẫu từ câu hỏi
+                    var expectedOutput = question.ExpectedOutput; // Lấy output mong đợi từ câu hỏi
+
+                    inputValues.Add(input ?? ""); // Lưu input mẫu
+                    outputValues.Add(expectedOutput ?? ""); // Lưu output mong đợi
+
+                    // Chạy mã người dùng với input mẫu
+                    var output = await _jdoodleService.ExecuteCode(codes[i], question.Language); // Chạy mã người dùng nhập
+
+                    // Kiểm tra nếu có lỗi khi gọi dịch vụ JDoodle
+                    if (string.IsNullOrEmpty(output))
                     {
-                        // Kiểm tra đáp án trắc nghiệm của người dùng
-                        if (question.SelectedAnswer == answers[i])
-                        {
-                            score++; // Tăng điểm nếu câu trả lời đúng
-                        }
+                        output = "Error or no output received";
                     }
-                    // Kiểm tra câu hỏi code
-                    else if (question.QuestionType == "Code")
+
+                    // So sánh kết quả trả về với output mong đợi
+                    if (output == expectedOutput)
                     {
-                        var input = question.SampleInput; // Lấy input mẫu từ câu hỏi
-                        var expectedOutput = question.ExpectedOutput; // Lấy output mong đợi từ câu hỏi
-
-                        inputValues.Add(input); // Lưu input mẫu
-                        outputValues.Add(expectedOutput); // Lưu output mong đợi
-
-                        // Chạy mã người dùng với input mẫu
-                        var output = await _jdoodleService.ExecuteCode(codes[i], question.Language); // Chạy mã người dùng nhập
-
-                        // Kiểm tra nếu có lỗi khi gọi dịch vụ JDoodle
-                        if (string.IsNullOrEmpty(output))
-                        {
-                            // Nếu không có kết quả trả về, cộng điểm 0 hoặc xử lý lỗi tương ứng
-                            output = "Error or no output received";
-                        }
-
-                        // So sánh kết quả trả về với output mong đợi
-                        if (output == expectedOutput)
-                        {
-                            score++; // Cộng điểm nếu kết quả đúng
-                        }
+                        score++; // Cộng điểm nếu kết quả đúng
                     }
                 }
             }
@@ -96,14 +82,12 @@ namespace WebsiteHotrohoctap.Controllers
                 ExamDate = DateTime.Now,
                 Score = (score * 100) / exam.ExamContents.Count, // Tính điểm theo tỷ lệ
                 Status = "Completed", // Trạng thái bài làm
-                Answer = string.Join(";", answers), // Lưu đáp án trắc nghiệm người dùng đã chọn
                 Code = string.Join(";", codes), // Lưu mã code người dùng nộp
                 Input = string.Join(";", inputValues), // Lưu input đầu vào
                 Output = string.Join(";", outputValues), // Lưu output
             };
 
             await _examResultRepository.AddAsync(result); // Lưu kết quả vào DB
-
 
             // Chuyển đến trang kết quả bài thi
             return RedirectToAction("ResultDetails", new { id = result.ResultID });

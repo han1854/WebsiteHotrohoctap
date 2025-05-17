@@ -19,22 +19,10 @@
             @for (int i = 0; i < Model.Exam.ExamContents.Count; i++)
             {
                 var question = Model.Exam.ExamContents[i];
-                var userAnswer = Model.Answer?.Split(';').ElementAtOrDefault(i);
-                var correctAnswer = question.SelectedAnswer;
-                string result = string.Empty;
-                bool isCorrect = false;
-
-                // Xử lý kết quả
-                if (question.QuestionType == "MultipleChoice")
-                {
-                    isCorrect = userAnswer == correctAnswer;
-                }
-                else if (question.QuestionType == "Code")
-                {
-                    var userOutput = Model.Output?.Split(';').ElementAtOrDefault(i);
-                    var expectedOutput = question.ExpectedOutput;
-                    isCorrect = userOutput == expectedOutput;
-                }
+                var userCode = Model.Code?.Split(';').ElementAtOrDefault(i);
+                var userOutput = Model.Output?.Split(';').ElementAtOrDefault(i);
+                var expectedOutput = question.ExpectedOutput;
+                bool isCorrect = userOutput == expectedOutput;
 
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
@@ -46,8 +34,8 @@
                                 <span class="badge bg-success">Đúng</span>
                             </p>
                             <p class="mt-2">
-                                <strong>Đáp án:</strong>
-                                <span class="text-success fw-bold">@correctAnswer</span>
+                                <strong>Output mong đợi:</strong>
+                                <span class="text-success fw-bold">@expectedOutput</span>
                             </p>
                         }
                         else
@@ -56,17 +44,22 @@
                                 <span class="badge bg-danger">Sai</span>
                             </p>
                             <p class="mt-2">
-                                <strong>Đáp án của bạn:</strong>
-                                <span class="text-danger fw-bold">@userAnswer</span>
+                                <strong>Output của bạn:</strong>
+                                <span class="text-danger fw-bold">@userOutput</span>
                             </p>
                             <p>
-                                <strong>Đáp án đúng:</strong>
-                                <span class="text-success fw-bold">@correctAnswer</span>
+                                <strong>Output mong đợi:</strong>
+                                <span class="text-success fw-bold">@expectedOutput</span>
                             </p>
                         }
 
+                        <p class="mt-2">
+                            <strong>Mã code của bạn:</strong>
+                            <pre class="bg-light p-2 rounded small">@userCode</pre>
+                        </p>
+
                         <div class="mt-2 text-muted">
-                            <small><i>Loại câu hỏi: @(question.QuestionType == "MultipleChoice" ? "Trắc nghiệm" : "Viết mã")</i></small>
+                            <small><i>Loại câu hỏi: Viết mã</i></small>
                         </div>
                     </div>
                 </div>
